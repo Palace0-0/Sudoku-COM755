@@ -90,11 +90,5 @@ public class Sudoku {
     
     
     
-    public static void main(String[] args) {
-       Sudoku jogo = new Sudoku();
-       jogo.populartabuleiro();
-       jogo.printartabuleiro();
-       
-      
-    }
+ 
 }

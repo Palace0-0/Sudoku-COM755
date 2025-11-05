@@ -16,7 +16,7 @@ public class SudokuPanel extends javax.swing.JPanel {
     Sudoku sudoku = new Sudoku("facil");
     
     
-    //OBS esta função printa os valores do jogo no paineltabuleiro, mas vai precisar ser alterarda no futuro pois atualmente printa o gabairto e n o jogo real
+    //OBS esta função printa os valores do jogo no paineltabuleiro
     private void atualizarPainel() {
         int[][] matriz = sudoku.getJogo();
         Component[] componentes = PainelTabuleiro.getComponents(); // pega todos os JTextField
@@ -25,9 +25,16 @@ public class SudokuPanel extends javax.swing.JPanel {
             for (int j = 0; j < 9; j++) {
                 int indice = i * 9 + j; // posição no array de componentes
                 if (componentes[indice] instanceof JTextField campo) {
-                    campo.setText(String.valueOf(matriz[i][j]));
-                    campo.setEditable(false);               // se for número fixo
-                    campo.setBackground(new Color(220, 220, 220)); // cinza claro
+                    
+                    int valor = matriz[i][j];
+                    if (valor == 0){
+                        campo.setText("");
+                    }else{
+                        campo.setText(String.valueOf(matriz[i][j])); 
+                    }
+                    
+                   campo.setEditable(false);               // se for número fixo
+                   campo.setBackground(new Color(255, 255, 255)); // branco
                 }
             }
         }

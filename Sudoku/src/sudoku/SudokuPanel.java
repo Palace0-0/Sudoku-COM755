@@ -6,6 +6,7 @@ package sudoku;
 
 import java.awt.Color;
 import java.awt.Component;
+import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
@@ -13,32 +14,43 @@ import javax.swing.JTextField;
  * @author gpala
  */
 public class SudokuPanel extends javax.swing.JPanel {
-    Sudoku sudoku = new Sudoku("facil");
+    Sudoku sudoku = new Sudoku("dificil");
     
     
-    //OBS esta função printa os valores do jogo no paineltabuleiro
+    //Esta função printa os valores do jogo no paineltabuleiro
     private void atualizarPainel() {
         int[][] matriz = sudoku.getJogo();
-        Component[] componentes = PainelTabuleiro.getComponents(); // pega todos os JTextField
+        Component[] blocos = PainelTabuleiro.getComponents(); // 9 JPanels
 
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                int indice = i * 9 + j; // posição no array de componentes
-                if (componentes[indice] instanceof JTextField campo) {
-                    
-                    int valor = matriz[i][j];
-                    if (valor == 0){
-                        campo.setText("");
-                    }else{
-                        campo.setText(String.valueOf(matriz[i][j])); 
+        for (int b = 0; b < blocos.length; b++) {
+            if (blocos[b] instanceof JPanel bloco) {
+                Component[] campos = bloco.getComponents(); // 9 JTextFields
+
+                // Determina a posição inicial do bloco na matriz
+                int blocoLinha = (b / 3) * 3;
+                int blocoColuna = (b % 3) * 3;
+
+                for (int c = 0; c < campos.length; c++) {
+                    if (campos[c] instanceof JTextField campo) {
+
+                        int campoLinha = c / 3;
+                        int campoColuna = c % 3;
+
+                        int valor = matriz[blocoLinha + campoLinha][blocoColuna + campoColuna];
+
+                        if (valor == 0) {
+                            campo.setText("");
+                        } else {
+                            campo.setText(String.valueOf(valor));
+                        }
+
+                        campo.setEditable(false);
                     }
-                    
-                   campo.setEditable(false);               // se for número fixo
-                   campo.setBackground(new Color(255, 255, 255)); // branco
                 }
             }
         }
     }
+
 
     
     public SudokuPanel() {
@@ -59,6 +71,7 @@ public class SudokuPanel extends javax.swing.JPanel {
     private void initComponents() {
 
         PainelTabuleiro = new javax.swing.JPanel();
+        jPanel1 = new javax.swing.JPanel();
         jTextField1 = new javax.swing.JTextField();
         jTextField2 = new javax.swing.JTextField();
         jTextField3 = new javax.swing.JTextField();
@@ -68,6 +81,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         jTextField7 = new javax.swing.JTextField();
         jTextField8 = new javax.swing.JTextField();
         jTextField9 = new javax.swing.JTextField();
+        jPanel2 = new javax.swing.JPanel();
         jTextField10 = new javax.swing.JTextField();
         jTextField11 = new javax.swing.JTextField();
         jTextField12 = new javax.swing.JTextField();
@@ -77,6 +91,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         jTextField16 = new javax.swing.JTextField();
         jTextField17 = new javax.swing.JTextField();
         jTextField18 = new javax.swing.JTextField();
+        jPanel3 = new javax.swing.JPanel();
         jTextField19 = new javax.swing.JTextField();
         jTextField20 = new javax.swing.JTextField();
         jTextField21 = new javax.swing.JTextField();
@@ -86,6 +101,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         jTextField25 = new javax.swing.JTextField();
         jTextField26 = new javax.swing.JTextField();
         jTextField27 = new javax.swing.JTextField();
+        jPanel4 = new javax.swing.JPanel();
         jTextField28 = new javax.swing.JTextField();
         jTextField29 = new javax.swing.JTextField();
         jTextField30 = new javax.swing.JTextField();
@@ -95,6 +111,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         jTextField34 = new javax.swing.JTextField();
         jTextField35 = new javax.swing.JTextField();
         jTextField36 = new javax.swing.JTextField();
+        jPanel5 = new javax.swing.JPanel();
         jTextField37 = new javax.swing.JTextField();
         jTextField38 = new javax.swing.JTextField();
         jTextField39 = new javax.swing.JTextField();
@@ -104,6 +121,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         jTextField43 = new javax.swing.JTextField();
         jTextField44 = new javax.swing.JTextField();
         jTextField45 = new javax.swing.JTextField();
+        jPanel6 = new javax.swing.JPanel();
         jTextField46 = new javax.swing.JTextField();
         jTextField47 = new javax.swing.JTextField();
         jTextField48 = new javax.swing.JTextField();
@@ -113,6 +131,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         jTextField52 = new javax.swing.JTextField();
         jTextField53 = new javax.swing.JTextField();
         jTextField54 = new javax.swing.JTextField();
+        jPanel7 = new javax.swing.JPanel();
         jTextField55 = new javax.swing.JTextField();
         jTextField56 = new javax.swing.JTextField();
         jTextField57 = new javax.swing.JTextField();
@@ -122,6 +141,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         jTextField61 = new javax.swing.JTextField();
         jTextField62 = new javax.swing.JTextField();
         jTextField63 = new javax.swing.JTextField();
+        jPanel8 = new javax.swing.JPanel();
         jTextField64 = new javax.swing.JTextField();
         jTextField65 = new javax.swing.JTextField();
         jTextField66 = new javax.swing.JTextField();
@@ -131,6 +151,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         jTextField70 = new javax.swing.JTextField();
         jTextField71 = new javax.swing.JTextField();
         jTextField72 = new javax.swing.JTextField();
+        jPanel9 = new javax.swing.JPanel();
         jTextField73 = new javax.swing.JTextField();
         jTextField74 = new javax.swing.JTextField();
         jTextField75 = new javax.swing.JTextField();
@@ -140,517 +161,683 @@ public class SudokuPanel extends javax.swing.JPanel {
         jTextField79 = new javax.swing.JTextField();
         jTextField80 = new javax.swing.JTextField();
         jTextField81 = new javax.swing.JTextField();
+        PainelTeclado = new javax.swing.JPanel();
+        jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
+        jButton9 = new javax.swing.JButton();
 
-        PainelTabuleiro.setBackground(new java.awt.Color(0, 0, 0));
-        PainelTabuleiro.setLayout(new java.awt.GridLayout(9, 9));
+        setBackground(new java.awt.Color(245, 245, 245));
 
-        jTextField1.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        PainelTabuleiro.setBackground(new java.awt.Color(129, 172, 220));
+        PainelTabuleiro.setBorder(javax.swing.BorderFactory.createMatteBorder(4, 4, 4, 4, new java.awt.Color(129, 172, 220)));
+        PainelTabuleiro.setMinimumSize(new java.awt.Dimension(550, 550));
+        PainelTabuleiro.setLayout(new java.awt.GridLayout(3, 3, 4, 4));
+
+        jPanel1.setBackground(new java.awt.Color(195, 214, 235));
+        jPanel1.setLayout(new java.awt.GridLayout(3, 3, 1, 1));
+
+        jTextField1.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField1.setForeground(new java.awt.Color(79, 115, 156));
         jTextField1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField1.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField1);
+        jPanel1.add(jTextField1);
 
-        jTextField2.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField2.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField2.setForeground(new java.awt.Color(79, 115, 156));
         jTextField2.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField2.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField2.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField2);
+        jPanel1.add(jTextField2);
 
-        jTextField3.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField3.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField3.setForeground(new java.awt.Color(79, 115, 156));
         jTextField3.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField3.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField3.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField3);
+        jPanel1.add(jTextField3);
 
-        jTextField4.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField4.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField4.setForeground(new java.awt.Color(79, 115, 156));
         jTextField4.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField4.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField4.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField4);
+        jPanel1.add(jTextField4);
 
-        jTextField5.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField5.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField5.setForeground(new java.awt.Color(79, 115, 156));
         jTextField5.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField5.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField5.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField5);
+        jPanel1.add(jTextField5);
 
-        jTextField6.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField6.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField6.setForeground(new java.awt.Color(79, 115, 156));
         jTextField6.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField6.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField6.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField6);
+        jPanel1.add(jTextField6);
 
-        jTextField7.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField7.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField7.setForeground(new java.awt.Color(79, 115, 156));
         jTextField7.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField7.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField7.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField7);
+        jPanel1.add(jTextField7);
 
-        jTextField8.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField8.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField8.setForeground(new java.awt.Color(79, 115, 156));
         jTextField8.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField8.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField8.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField8);
+        jPanel1.add(jTextField8);
 
-        jTextField9.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField9.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField9.setForeground(new java.awt.Color(79, 115, 156));
         jTextField9.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField9.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField9.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField9);
+        jPanel1.add(jTextField9);
 
-        jTextField10.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jTextField10.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField10.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField10.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField10);
+        PainelTabuleiro.add(jPanel1);
 
-        jTextField11.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jTextField11.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField11.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField11.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField11);
+        jPanel2.setBackground(new java.awt.Color(195, 214, 235));
+        jPanel2.setLayout(new java.awt.GridLayout(3, 3, 2, 2));
 
-        jTextField12.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jTextField12.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField12.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField12.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField12);
+        jTextField10.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField10.setForeground(new java.awt.Color(79, 115, 156));
+        jTextField10.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel2.add(jTextField10);
 
-        jTextField13.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jTextField13.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField13.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField13.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField13);
+        jTextField11.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField11.setForeground(new java.awt.Color(79, 115, 156));
+        jTextField11.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel2.add(jTextField11);
 
-        jTextField14.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jTextField14.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField14.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField14.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField14);
+        jTextField12.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField12.setForeground(new java.awt.Color(79, 115, 156));
+        jTextField12.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel2.add(jTextField12);
 
-        jTextField15.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jTextField15.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField15.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField15.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField15);
+        jTextField13.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField13.setForeground(new java.awt.Color(79, 115, 156));
+        jTextField13.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel2.add(jTextField13);
 
-        jTextField16.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jTextField16.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField16.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField16.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField16);
+        jTextField14.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField14.setForeground(new java.awt.Color(79, 115, 156));
+        jTextField14.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel2.add(jTextField14);
 
-        jTextField17.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jTextField17.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField17.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField17.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField17);
+        jTextField15.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField15.setForeground(new java.awt.Color(79, 115, 156));
+        jTextField15.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel2.add(jTextField15);
 
-        jTextField18.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
-        jTextField18.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField18.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField18.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField18);
+        jTextField16.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField16.setForeground(new java.awt.Color(79, 115, 156));
+        jTextField16.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel2.add(jTextField16);
 
-        jTextField19.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField17.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField17.setForeground(new java.awt.Color(79, 115, 156));
+        jTextField17.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel2.add(jTextField17);
+
+        jTextField18.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField18.setForeground(new java.awt.Color(79, 115, 156));
+        jTextField18.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel2.add(jTextField18);
+
+        PainelTabuleiro.add(jPanel2);
+
+        jPanel3.setBackground(new java.awt.Color(195, 214, 235));
+        jPanel3.setLayout(new java.awt.GridLayout(3, 3, 2, 2));
+
+        jTextField19.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField19.setForeground(new java.awt.Color(79, 115, 156));
         jTextField19.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField19.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField19.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField19);
+        jTextField19.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel3.add(jTextField19);
 
-        jTextField20.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField20.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField20.setForeground(new java.awt.Color(79, 115, 156));
         jTextField20.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField20.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField20.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField20);
+        jTextField20.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel3.add(jTextField20);
 
-        jTextField21.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField21.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField21.setForeground(new java.awt.Color(79, 115, 156));
         jTextField21.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField21.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField21.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField21);
+        jTextField21.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel3.add(jTextField21);
 
-        jTextField22.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField22.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField22.setForeground(new java.awt.Color(79, 115, 156));
         jTextField22.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField22.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField22.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField22);
+        jTextField22.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel3.add(jTextField22);
 
-        jTextField23.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField23.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField23.setForeground(new java.awt.Color(79, 115, 156));
         jTextField23.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField23.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField23.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField23);
+        jTextField23.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel3.add(jTextField23);
 
-        jTextField24.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField24.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField24.setForeground(new java.awt.Color(79, 115, 156));
         jTextField24.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField24.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField24.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField24);
+        jTextField24.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel3.add(jTextField24);
 
-        jTextField25.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField25.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField25.setForeground(new java.awt.Color(79, 115, 156));
         jTextField25.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField25.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField25.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField25);
+        jTextField25.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel3.add(jTextField25);
 
-        jTextField26.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField26.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField26.setForeground(new java.awt.Color(79, 115, 156));
         jTextField26.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField26.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField26.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField26);
+        jTextField26.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel3.add(jTextField26);
 
-        jTextField27.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField27.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField27.setForeground(new java.awt.Color(79, 115, 156));
         jTextField27.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField27.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField27.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField27);
+        jTextField27.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel3.add(jTextField27);
 
-        jTextField28.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        PainelTabuleiro.add(jPanel3);
+
+        jPanel4.setBackground(new java.awt.Color(195, 214, 235));
+        jPanel4.setLayout(new java.awt.GridLayout(3, 3, 2, 2));
+
+        jTextField28.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField28.setForeground(new java.awt.Color(79, 115, 156));
         jTextField28.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField28.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField28.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField28);
+        jTextField28.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel4.add(jTextField28);
 
-        jTextField29.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField29.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField29.setForeground(new java.awt.Color(79, 115, 156));
         jTextField29.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField29.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField29.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField29);
+        jTextField29.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel4.add(jTextField29);
 
-        jTextField30.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField30.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField30.setForeground(new java.awt.Color(79, 115, 156));
         jTextField30.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField30.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField30.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField30);
+        jTextField30.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel4.add(jTextField30);
 
-        jTextField31.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField31.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField31.setForeground(new java.awt.Color(79, 115, 156));
         jTextField31.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField31.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField31.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField31);
+        jTextField31.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel4.add(jTextField31);
 
-        jTextField32.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField32.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField32.setForeground(new java.awt.Color(79, 115, 156));
         jTextField32.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField32.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField32.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField32);
+        jTextField32.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel4.add(jTextField32);
 
-        jTextField33.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField33.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField33.setForeground(new java.awt.Color(79, 115, 156));
         jTextField33.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField33.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField33.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField33);
+        jTextField33.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel4.add(jTextField33);
 
-        jTextField34.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField34.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField34.setForeground(new java.awt.Color(79, 115, 156));
         jTextField34.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField34.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField34.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField34);
+        jTextField34.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel4.add(jTextField34);
 
-        jTextField35.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField35.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField35.setForeground(new java.awt.Color(79, 115, 156));
         jTextField35.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField35.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField35.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField35);
+        jTextField35.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel4.add(jTextField35);
 
-        jTextField36.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField36.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField36.setForeground(new java.awt.Color(79, 115, 156));
         jTextField36.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField36.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField36.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField36);
+        jTextField36.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel4.add(jTextField36);
 
-        jTextField37.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        PainelTabuleiro.add(jPanel4);
+
+        jPanel5.setBackground(new java.awt.Color(195, 214, 235));
+        jPanel5.setLayout(new java.awt.GridLayout(3, 3, 2, 2));
+
+        jTextField37.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField37.setForeground(new java.awt.Color(79, 115, 156));
         jTextField37.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField37.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField37.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField37);
+        jTextField37.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel5.add(jTextField37);
 
-        jTextField38.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField38.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField38.setForeground(new java.awt.Color(79, 115, 156));
         jTextField38.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField38.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField38.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField38);
+        jTextField38.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel5.add(jTextField38);
 
-        jTextField39.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField39.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField39.setForeground(new java.awt.Color(79, 115, 156));
         jTextField39.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField39.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField39.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField39);
+        jTextField39.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel5.add(jTextField39);
 
-        jTextField40.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField40.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField40.setForeground(new java.awt.Color(79, 115, 156));
         jTextField40.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField40.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField40.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField40);
+        jTextField40.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel5.add(jTextField40);
 
-        jTextField41.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField41.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField41.setForeground(new java.awt.Color(79, 115, 156));
         jTextField41.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField41.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField41.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField41);
+        jTextField41.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel5.add(jTextField41);
 
-        jTextField42.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField42.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField42.setForeground(new java.awt.Color(79, 115, 156));
         jTextField42.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField42.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField42.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField42);
+        jTextField42.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel5.add(jTextField42);
 
-        jTextField43.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField43.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField43.setForeground(new java.awt.Color(79, 115, 156));
         jTextField43.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField43.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField43.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField43);
+        jTextField43.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel5.add(jTextField43);
 
-        jTextField44.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField44.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField44.setForeground(new java.awt.Color(79, 115, 156));
         jTextField44.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField44.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField44.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField44);
+        jTextField44.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel5.add(jTextField44);
 
-        jTextField45.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField45.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField45.setForeground(new java.awt.Color(79, 115, 156));
         jTextField45.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField45.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField45.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField45);
+        jTextField45.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel5.add(jTextField45);
 
-        jTextField46.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        PainelTabuleiro.add(jPanel5);
+
+        jPanel6.setBackground(new java.awt.Color(195, 214, 235));
+        jPanel6.setLayout(new java.awt.GridLayout(3, 3, 2, 2));
+
+        jTextField46.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField46.setForeground(new java.awt.Color(79, 115, 156));
         jTextField46.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField46.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField46.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField46);
+        jTextField46.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel6.add(jTextField46);
 
-        jTextField47.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField47.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField47.setForeground(new java.awt.Color(79, 115, 156));
         jTextField47.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField47.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField47.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField47);
+        jTextField47.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel6.add(jTextField47);
 
-        jTextField48.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField48.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField48.setForeground(new java.awt.Color(79, 115, 156));
         jTextField48.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField48.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField48.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField48);
+        jTextField48.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel6.add(jTextField48);
 
-        jTextField49.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField49.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField49.setForeground(new java.awt.Color(79, 115, 156));
         jTextField49.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField49.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField49.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField49);
+        jTextField49.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel6.add(jTextField49);
 
-        jTextField50.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField50.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField50.setForeground(new java.awt.Color(79, 115, 156));
         jTextField50.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField50.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField50.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField50);
+        jTextField50.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel6.add(jTextField50);
 
-        jTextField51.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField51.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField51.setForeground(new java.awt.Color(79, 115, 156));
         jTextField51.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField51.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField51.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField51);
+        jTextField51.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel6.add(jTextField51);
 
-        jTextField52.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField52.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField52.setForeground(new java.awt.Color(79, 115, 156));
         jTextField52.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField52.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField52.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField52);
+        jTextField52.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel6.add(jTextField52);
 
-        jTextField53.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField53.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField53.setForeground(new java.awt.Color(79, 115, 156));
         jTextField53.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField53.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField53.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField53);
+        jTextField53.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel6.add(jTextField53);
 
-        jTextField54.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField54.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField54.setForeground(new java.awt.Color(79, 115, 156));
         jTextField54.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField54.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField54.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField54);
+        jTextField54.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel6.add(jTextField54);
 
-        jTextField55.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        PainelTabuleiro.add(jPanel6);
+
+        jPanel7.setBackground(new java.awt.Color(195, 214, 235));
+        jPanel7.setLayout(new java.awt.GridLayout(3, 3, 2, 2));
+
+        jTextField55.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField55.setForeground(new java.awt.Color(79, 115, 156));
         jTextField55.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField55.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField55.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField55);
+        jTextField55.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel7.add(jTextField55);
 
-        jTextField56.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField56.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField56.setForeground(new java.awt.Color(79, 115, 156));
         jTextField56.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField56.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField56.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField56);
+        jTextField56.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel7.add(jTextField56);
 
-        jTextField57.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField57.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField57.setForeground(new java.awt.Color(79, 115, 156));
         jTextField57.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField57.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField57.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField57);
+        jTextField57.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel7.add(jTextField57);
 
-        jTextField58.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField58.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField58.setForeground(new java.awt.Color(79, 115, 156));
         jTextField58.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField58.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField58.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField58);
+        jTextField58.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel7.add(jTextField58);
 
-        jTextField59.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField59.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField59.setForeground(new java.awt.Color(79, 115, 156));
         jTextField59.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField59.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField59.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField59);
+        jTextField59.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel7.add(jTextField59);
 
-        jTextField60.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField60.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField60.setForeground(new java.awt.Color(79, 115, 156));
         jTextField60.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField60.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField60.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField60);
+        jTextField60.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel7.add(jTextField60);
 
-        jTextField61.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField61.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField61.setForeground(new java.awt.Color(79, 115, 156));
         jTextField61.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField61.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField61.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField61);
+        jTextField61.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel7.add(jTextField61);
 
-        jTextField62.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField62.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField62.setForeground(new java.awt.Color(79, 115, 156));
         jTextField62.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField62.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField62.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField62);
+        jTextField62.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel7.add(jTextField62);
 
-        jTextField63.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField63.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField63.setForeground(new java.awt.Color(79, 115, 156));
         jTextField63.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField63.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField63.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField63);
+        jTextField63.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel7.add(jTextField63);
 
-        jTextField64.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        PainelTabuleiro.add(jPanel7);
+
+        jPanel8.setBackground(new java.awt.Color(195, 214, 235));
+        jPanel8.setLayout(new java.awt.GridLayout(3, 3, 2, 2));
+
+        jTextField64.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField64.setForeground(new java.awt.Color(79, 115, 156));
         jTextField64.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField64.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField64.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField64);
+        jTextField64.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel8.add(jTextField64);
 
-        jTextField65.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField65.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField65.setForeground(new java.awt.Color(79, 115, 156));
         jTextField65.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField65.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField65.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField65);
+        jTextField65.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel8.add(jTextField65);
 
-        jTextField66.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField66.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField66.setForeground(new java.awt.Color(79, 115, 156));
         jTextField66.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField66.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField66.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField66);
+        jTextField66.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel8.add(jTextField66);
 
-        jTextField67.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField67.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField67.setForeground(new java.awt.Color(79, 115, 156));
         jTextField67.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField67.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField67.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField67);
+        jTextField67.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel8.add(jTextField67);
 
-        jTextField68.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField68.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField68.setForeground(new java.awt.Color(79, 115, 156));
         jTextField68.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField68.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField68.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField68);
+        jTextField68.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel8.add(jTextField68);
 
-        jTextField69.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField69.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField69.setForeground(new java.awt.Color(79, 115, 156));
         jTextField69.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField69.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField69.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField69);
+        jTextField69.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel8.add(jTextField69);
 
-        jTextField70.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField70.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField70.setForeground(new java.awt.Color(79, 115, 156));
         jTextField70.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField70.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField70.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField70);
+        jTextField70.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel8.add(jTextField70);
 
-        jTextField71.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField71.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField71.setForeground(new java.awt.Color(79, 115, 156));
         jTextField71.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField71.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField71.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField71);
+        jTextField71.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel8.add(jTextField71);
 
-        jTextField72.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField72.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField72.setForeground(new java.awt.Color(79, 115, 156));
         jTextField72.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField72.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField72.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField72);
+        jTextField72.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel8.add(jTextField72);
 
-        jTextField73.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        PainelTabuleiro.add(jPanel8);
+
+        jPanel9.setBackground(new java.awt.Color(195, 214, 235));
+        jPanel9.setLayout(new java.awt.GridLayout(3, 3, 2, 2));
+
+        jTextField73.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField73.setForeground(new java.awt.Color(79, 115, 156));
         jTextField73.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField73.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField73.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField73);
+        jTextField73.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel9.add(jTextField73);
 
-        jTextField74.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField74.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField74.setForeground(new java.awt.Color(79, 115, 156));
         jTextField74.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField74.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField74.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField74);
+        jTextField74.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel9.add(jTextField74);
 
-        jTextField75.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField75.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField75.setForeground(new java.awt.Color(79, 115, 156));
         jTextField75.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField75.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField75.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField75);
+        jTextField75.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel9.add(jTextField75);
 
-        jTextField76.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField76.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField76.setForeground(new java.awt.Color(79, 115, 156));
         jTextField76.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField76.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField76.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField76);
+        jTextField76.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel9.add(jTextField76);
 
-        jTextField77.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField77.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField77.setForeground(new java.awt.Color(79, 115, 156));
         jTextField77.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField77.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField77.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField77);
+        jTextField77.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel9.add(jTextField77);
 
-        jTextField78.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField78.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField78.setForeground(new java.awt.Color(79, 115, 156));
         jTextField78.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField78.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField78.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField78);
+        jTextField78.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel9.add(jTextField78);
 
-        jTextField79.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField79.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField79.setForeground(new java.awt.Color(79, 115, 156));
         jTextField79.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField79.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField79.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField79);
+        jTextField79.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel9.add(jTextField79);
 
-        jTextField80.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField80.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField80.setForeground(new java.awt.Color(79, 115, 156));
         jTextField80.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField80.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField80.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField80);
+        jTextField80.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel9.add(jTextField80);
 
-        jTextField81.setFont(new java.awt.Font("Arial", 1, 18)); // NOI18N
+        jTextField81.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
+        jTextField81.setForeground(new java.awt.Color(79, 115, 156));
         jTextField81.setHorizontalAlignment(javax.swing.JTextField.CENTER);
-        jTextField81.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(204, 204, 204)));
-        jTextField81.setPreferredSize(new java.awt.Dimension(40, 40));
-        PainelTabuleiro.add(jTextField81);
+        jTextField81.setDisabledTextColor(new java.awt.Color(255, 255, 255));
+        jPanel9.add(jTextField81);
+
+        PainelTabuleiro.add(jPanel9);
+
+        PainelTeclado.setBackground(new java.awt.Color(245, 245, 245));
+
+        jButton1.setBackground(new java.awt.Color(243, 249, 255));
+        jButton1.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        jButton1.setForeground(new java.awt.Color(79, 115, 156));
+        jButton1.setText("1");
+        jButton1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+
+        jButton2.setBackground(new java.awt.Color(243, 249, 255));
+        jButton2.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        jButton2.setForeground(new java.awt.Color(79, 115, 156));
+        jButton2.setText("2");
+        jButton2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+
+        jButton3.setBackground(new java.awt.Color(243, 249, 255));
+        jButton3.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        jButton3.setForeground(new java.awt.Color(79, 115, 156));
+        jButton3.setText("4");
+        jButton3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+
+        jButton4.setBackground(new java.awt.Color(243, 249, 255));
+        jButton4.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        jButton4.setForeground(new java.awt.Color(79, 115, 156));
+        jButton4.setText("3");
+        jButton4.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+
+        jButton5.setBackground(new java.awt.Color(243, 249, 255));
+        jButton5.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        jButton5.setForeground(new java.awt.Color(79, 115, 156));
+        jButton5.setText("8");
+        jButton5.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+
+        jButton6.setBackground(new java.awt.Color(243, 249, 255));
+        jButton6.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        jButton6.setForeground(new java.awt.Color(79, 115, 156));
+        jButton6.setText("7");
+        jButton6.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+
+        jButton7.setBackground(new java.awt.Color(243, 249, 255));
+        jButton7.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        jButton7.setForeground(new java.awt.Color(79, 115, 156));
+        jButton7.setText("5");
+        jButton7.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+
+        jButton8.setBackground(new java.awt.Color(243, 249, 255));
+        jButton8.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        jButton8.setForeground(new java.awt.Color(79, 115, 156));
+        jButton8.setText("6");
+        jButton8.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+
+        jButton9.setBackground(new java.awt.Color(243, 249, 255));
+        jButton9.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        jButton9.setForeground(new java.awt.Color(79, 115, 156));
+        jButton9.setText("9");
+        jButton9.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+
+        javax.swing.GroupLayout PainelTecladoLayout = new javax.swing.GroupLayout(PainelTeclado);
+        PainelTeclado.setLayout(PainelTecladoLayout);
+        PainelTecladoLayout.setHorizontalGroup(
+            PainelTecladoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PainelTecladoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 56, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
+        PainelTecladoLayout.setVerticalGroup(
+            PainelTecladoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PainelTecladoLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(PainelTecladoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addGroup(PainelTecladoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(jButton4, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(PainelTecladoLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton8, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jButton9, javax.swing.GroupLayout.PREFERRED_SIZE, 54, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(150, Short.MAX_VALUE)
-                .addComponent(PainelTabuleiro, javax.swing.GroupLayout.PREFERRED_SIZE, 426, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(150, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(250, Short.MAX_VALUE)
+                .addComponent(PainelTabuleiro, javax.swing.GroupLayout.PREFERRED_SIZE, 497, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(251, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(217, Short.MAX_VALUE)
+                .addComponent(PainelTeclado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(217, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(150, Short.MAX_VALUE)
-                .addComponent(PainelTabuleiro, javax.swing.GroupLayout.PREFERRED_SIZE, 390, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(150, Short.MAX_VALUE))
+                .addContainerGap(78, Short.MAX_VALUE)
+                .addComponent(PainelTabuleiro, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(45, 45, 45)
+                .addComponent(PainelTeclado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(34, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JPanel PainelTabuleiro;
+    private javax.swing.JPanel PainelTeclado;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
+    private javax.swing.JButton jButton9;
+    private javax.swing.JPanel jPanel1;
+    private javax.swing.JPanel jPanel2;
+    private javax.swing.JPanel jPanel3;
+    private javax.swing.JPanel jPanel4;
+    private javax.swing.JPanel jPanel5;
+    private javax.swing.JPanel jPanel6;
+    private javax.swing.JPanel jPanel7;
+    private javax.swing.JPanel jPanel8;
+    private javax.swing.JPanel jPanel9;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField10;
     private javax.swing.JTextField jTextField11;

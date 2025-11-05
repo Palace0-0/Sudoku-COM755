@@ -10,6 +10,20 @@ public class Sudoku {
     
     private int [][] tabuleiro = new int [9][9];
     
+    //Construtor da classe
+    public Sudoku() {
+        populartabuleiro();
+    }
+
+    public int[][] getTabuleiro() {
+        return tabuleiro;
+    }
+
+    public void setTabuleiro(int[][] tabuleiro) {
+        this.tabuleiro = tabuleiro;
+    }
+    
+    
     private boolean verificarposicao(int valor, int linha, int coluna){
         
         //Verifica se o valar a ser add ja existe na linha
@@ -45,7 +59,7 @@ public class Sudoku {
     }
     
      // Preenche o tabuleiro usando backtracking
-    public boolean populartabuleiro() {
+    private boolean populartabuleiro() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
                 if (tabuleiro[i][j] == 0) { // se a célula estiver vazia

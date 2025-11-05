@@ -1,6 +1,7 @@
 
 package sudoku;
 
+import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.BorderLayout;
 import javax.swing.JFrame;
 
@@ -9,10 +10,13 @@ public class Mainframe extends javax.swing.JFrame {
 
     
     public Mainframe() {
+        
+        
+        
+        
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-
-        // Maximiza para tela cheia
-        setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
+        //setExtendedState(JFrame.MAXIMIZED_BOTH);
         setVisible(true);
         
         // Cria o painel SudokuPanel e adiciona ao JFrame
@@ -48,7 +52,7 @@ public class Mainframe extends javax.swing.JFrame {
 
     
     public static void main(String args[]) {
-        
+        FlatLightLaf.setup();
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new Mainframe().setVisible(true);

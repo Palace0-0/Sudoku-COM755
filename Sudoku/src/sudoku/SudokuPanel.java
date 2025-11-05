@@ -13,12 +13,12 @@ import javax.swing.JTextField;
  * @author gpala
  */
 public class SudokuPanel extends javax.swing.JPanel {
-    Sudoku jogo = new Sudoku();
+    Sudoku sudoku = new Sudoku("facil");
     
     
-    //OBS esta função printa os valores do jogo no paineltabuleiro
+    //OBS esta função printa os valores do jogo no paineltabuleiro, mas vai precisar ser alterarda no futuro pois atualmente printa o gabairto e n o jogo real
     private void atualizarPainel() {
-        int[][] matriz = jogo.getTabuleiro();
+        int[][] matriz = sudoku.getJogo();
         Component[] componentes = PainelTabuleiro.getComponents(); // pega todos os JTextField
 
         for (int i = 0; i < 9; i++) {
@@ -38,6 +38,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         
         initComponents();
         atualizarPainel();
+        sudoku.printartabuleiro();
         
     }
 

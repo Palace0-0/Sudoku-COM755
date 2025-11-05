@@ -9,19 +9,24 @@ import java.util.List;
 public class Sudoku {
     
     private int [][] tabuleiro = new int [9][9];
+    private int [][] jogo ;
     
     //Construtor da classe
-    public Sudoku() {
+    public Sudoku(String dificuldade) {
         populartabuleiro();
+        this.jogo = gerarJogo(dificuldade);
+        
     }
 
     public int[][] getTabuleiro() {
         return tabuleiro;
     }
 
-    public void setTabuleiro(int[][] tabuleiro) {
-        this.tabuleiro = tabuleiro;
+    public int[][] getJogo() {
+        return jogo;
     }
+
+    
     
     
     private boolean verificarposicao(int valor, int linha, int coluna){
@@ -91,6 +96,50 @@ public class Sudoku {
 
         // Todas as células foram preenchidas
         return true;
+    }
+    
+    //Este método gera o jogo em si, pois ele remove a quantia de peças do tabuleiro com base no parametro recebido
+    private int[][] gerarJogo(String dificuldade){
+        
+        //Faz uma cópia do jogo para que assim possa ser verificado no futuro se a jogada foi correta
+        int[][] jogo = new int[9][9];
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                jogo[i][j] = tabuleiro[i][j];
+            }
+        }
+        
+        
+        //Define a quantia de peças a ser removida com base no parametro recebido
+        int qtdRemover = 0;
+        switch (dificuldade.toLowerCase()) {
+            case "facil":
+                qtdRemover = 30;
+                break;
+            case "medio":
+                qtdRemover = 40;
+                break;
+            case "dificil":
+                qtdRemover = 50;
+                break;
+            
+        }
+        
+        //Criar e embaralha a lista com as 81 posições
+        List<Integer> posicoes = new ArrayList<>();
+        for (int i = 0; i < 81; i++) posicoes.add(i);
+        
+        Collections.shuffle(posicoes);
+         
+        for (int i = 0; i < qtdRemover; i++) {
+            int pos = posicoes.get(i);
+            int linha = pos / 9;
+            int coluna = pos % 9;
+
+            jogo[linha][coluna] = 0;
+        }
+
+        return jogo;
     }
     
     public void printartabuleiro (){

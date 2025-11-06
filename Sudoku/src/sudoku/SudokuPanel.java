@@ -1,7 +1,4 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JPanel.java to edit this template
- */
+
 package sudoku;
 
 import java.awt.Color;
@@ -10,16 +7,13 @@ import java.awt.event.FocusAdapter;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 
-/**
- *
- * @author gpala
- */
+
 public class SudokuPanel extends javax.swing.JPanel {
     Sudoku sudoku = new Sudoku("dificil");
     private JTextField campoSelecionado;
     
     //Esta função printa os valores do jogo no paineltabuleiro
-    private void atualizarPainel() {
+    private void popularPainel() {
         int[][] matriz = sudoku.getJogo();
         Component[] blocos = PainelTabuleiro.getComponents(); // 9 JPanels
 
@@ -34,13 +28,21 @@ public class SudokuPanel extends javax.swing.JPanel {
                         int blocoLinha = (b / 3) * 3; // linha inicial do bloco
                         int blocoColuna = (b % 3) * 3; // coluna inicial do bloco
 
-                        int linha = blocoLinha + (c / 3);   // bloco de 3x3
+                        int linha = blocoLinha + (c / 3);
                         int coluna = blocoColuna + (c % 3);
+
+                        // Salva posição no JTextField
+                        campo.putClientProperty("linha", linha);
+                        campo.putClientProperty("coluna", coluna);
 
                         int valor = matriz[linha][coluna];
 
                         campo.setText(valor == 0 ? "" : String.valueOf(valor));
-                        campo.setEditable(false);
+                        campo.setEditable(valor == 0); // apenas células vazias editáveis
+                        
+                        
+                        campo.setBackground(Color.WHITE);
+                        campo.setCaretColor(Color.WHITE);
                     }
                 }
             }
@@ -62,11 +64,8 @@ public class SudokuPanel extends javax.swing.JPanel {
                         campo.addFocusListener(new java.awt.event.FocusAdapter() {
                             @Override
                             public void focusGained(java.awt.event.FocusEvent evt) {
-                                if (campoSelecionado != null) {
-                                    campoSelecionado.setBackground(Color.WHITE); // limpa anterior
-                                }
                                 campoSelecionado = campo;
-                                campoSelecionado.setBackground(new Color(255, 255, 224)); // destaque
+                                destacarLinhaColunaBloco();
                             }
 
                             @Override
@@ -80,10 +79,88 @@ public class SudokuPanel extends javax.swing.JPanel {
         }
     }
     
+    private void destacarLinhaColunaBloco() {
+        if (campoSelecionado == null) return;
+
+        int linhaSel = (int) campoSelecionado.getClientProperty("linha");
+        int colunaSel = (int) campoSelecionado.getClientProperty("coluna");
+
+        // Bloco do campo selecionado
+        int blocoLinhaSel = (linhaSel / 3) * 3;
+        int blocoColunaSel = (colunaSel / 3) * 3;
+
+        Component[] blocos = PainelTabuleiro.getComponents();
+        for (int b = 0; b < blocos.length; b++) {
+            if (blocos[b] instanceof JPanel bloco) {
+                Component[] campos = bloco.getComponents();
+                for (int c = 0; c < campos.length; c++) {
+                    if (campos[c] instanceof JTextField campo) {
+                        int blocoLinha = (b / 3) * 3;
+                        int blocoColuna = (b % 3) * 3;
+                        int linha = blocoLinha + (c / 3);
+                        int coluna = blocoColuna + (c % 3);
+
+                        // Não sobrescrever campos com erro
+                        if (!campo.getBackground().equals(new Color(255, 180, 180))) {
+                            if (campo == campoSelecionado) {
+                                campo.setBackground(new Color(255, 255, 180)); // amarelo claro
+                            } else {
+                                boolean mesmaLinha = linha == linhaSel;
+                                boolean mesmaColuna = coluna == colunaSel;
+                                boolean mesmoBloco = linha >= blocoLinhaSel && linha < blocoLinhaSel + 3 &&
+                                                     coluna >= blocoColunaSel && coluna < blocoColunaSel + 3;
+                                if (mesmaLinha || mesmaColuna || mesmoBloco) {
+                                    campo.setBackground(new Color(220, 240, 255)); // azul clarinho
+                                } else {
+                                    campo.setBackground(Color.WHITE); // padrão
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    //Adiciona o valor a célula desejada no tabuleiro
+    private void adicionarValor(int valor){
+        int [][] jogo = sudoku.getJogo();
+        int[][] gabaritro = sudoku.getTabuleiro();
+        
+        //Pega a linha e coluna do jtextfield selecionado
+        int linha = (int) campoSelecionado.getClientProperty("linha");
+        int coluna = (int) campoSelecionado.getClientProperty("coluna");
+        
+        //Verifica se tem um jtextfield selecionado e se o é um espaço a ser prenchido
+        if (campoSelecionado != null && campoSelecionado.isEditable()){
+            
+            //Inseri o valor ao tabuleiro jogo para manter as compraçoes e tudo mais
+            jogo[linha][coluna] = valor;
+            sudoku.setJogo(jogo);
+            
+            //Define o texto do jtextfield selecionado como o valor digitado
+            campoSelecionado.setText(String.valueOf(valor));
+            
+            //Caso o valor não seja o certo o campo fica vermelhor
+            if(jogo[linha][coluna] != gabaritro[linha][coluna]){
+                campoSelecionado.setBackground(new Color(255, 180, 180));
+                
+            }else{
+                campoSelecionado.setEditable(false);
+                campoSelecionado.setBackground(Color.WHITE);
+            }
+            
+        }
+        
+        
+        
+
+    }
+    
     public SudokuPanel() {
         
         initComponents();
-        atualizarPainel();
+        popularPainel();
         sudoku.printartabuleiro();
         configurarcampoSelecionado();
         
@@ -91,11 +168,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         
     }
 
-    /**
-     * This method is called from within the constructor to initialize the form.
-     * WARNING: Do NOT modify this code. The content of this method is always
-     * regenerated by the Form Editor.
-     */
+    
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
@@ -201,6 +274,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
+        PainelBotoes = new javax.swing.JPanel();
 
         setBackground(new java.awt.Color(245, 245, 245));
 
@@ -215,6 +289,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         jTextField1.setFont(new java.awt.Font("SansSerif", 1, 18)); // NOI18N
         jTextField1.setForeground(new java.awt.Color(79, 115, 156));
         jTextField1.setHorizontalAlignment(javax.swing.JTextField.CENTER);
+        jTextField1.setCaretColor(new java.awt.Color(255, 255, 255));
         jTextField1.setDisabledTextColor(new java.awt.Color(255, 255, 255));
         jPanel1.add(jTextField1);
 
@@ -747,54 +822,99 @@ public class SudokuPanel extends javax.swing.JPanel {
         jButton1.setForeground(new java.awt.Color(79, 115, 156));
         jButton1.setText("1");
         jButton1.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton1ActionPerformed(evt);
+            }
+        });
 
         jButton2.setBackground(new java.awt.Color(243, 249, 255));
         jButton2.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jButton2.setForeground(new java.awt.Color(79, 115, 156));
         jButton2.setText("2");
         jButton2.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
 
         jButton3.setBackground(new java.awt.Color(243, 249, 255));
         jButton3.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jButton3.setForeground(new java.awt.Color(79, 115, 156));
         jButton3.setText("4");
         jButton3.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
 
         jButton4.setBackground(new java.awt.Color(243, 249, 255));
         jButton4.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jButton4.setForeground(new java.awt.Color(79, 115, 156));
         jButton4.setText("3");
         jButton4.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
 
         jButton5.setBackground(new java.awt.Color(243, 249, 255));
         jButton5.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jButton5.setForeground(new java.awt.Color(79, 115, 156));
         jButton5.setText("8");
         jButton5.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
 
         jButton6.setBackground(new java.awt.Color(243, 249, 255));
         jButton6.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jButton6.setForeground(new java.awt.Color(79, 115, 156));
         jButton6.setText("7");
         jButton6.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
 
         jButton7.setBackground(new java.awt.Color(243, 249, 255));
         jButton7.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jButton7.setForeground(new java.awt.Color(79, 115, 156));
         jButton7.setText("5");
         jButton7.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
 
         jButton8.setBackground(new java.awt.Color(243, 249, 255));
         jButton8.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jButton8.setForeground(new java.awt.Color(79, 115, 156));
         jButton8.setText("6");
         jButton8.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
 
         jButton9.setBackground(new java.awt.Color(243, 249, 255));
         jButton9.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
         jButton9.setForeground(new java.awt.Color(79, 115, 156));
         jButton9.setText("9");
         jButton9.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout PainelTecladoLayout = new javax.swing.GroupLayout(PainelTeclado);
         PainelTeclado.setLayout(PainelTecladoLayout);
@@ -841,32 +961,85 @@ public class SudokuPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        PainelBotoes.setBackground(new java.awt.Color(0, 0, 0));
+
+        javax.swing.GroupLayout PainelBotoesLayout = new javax.swing.GroupLayout(PainelBotoes);
+        PainelBotoes.setLayout(PainelBotoesLayout);
+        PainelBotoesLayout.setHorizontalGroup(
+            PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 155, Short.MAX_VALUE)
+        );
+        PainelBotoesLayout.setVerticalGroup(
+            PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 0, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(PainelTabuleiro, javax.swing.GroupLayout.PREFERRED_SIZE, 497, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(170, Short.MAX_VALUE)
-                .addComponent(PainelTeclado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(170, Short.MAX_VALUE))
+                .addContainerGap(171, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(PainelTabuleiro, javax.swing.GroupLayout.PREFERRED_SIZE, 497, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(PainelBotoes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(PainelTeclado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(51, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
                 .addContainerGap(78, Short.MAX_VALUE)
-                .addComponent(PainelTabuleiro, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(PainelTabuleiro, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(PainelBotoes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addGap(45, 45, 45)
                 .addComponent(PainelTeclado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(34, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        adicionarValor(1);
+    }//GEN-LAST:event_jButton1ActionPerformed
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        adicionarValor(2);
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
+        adicionarValor(3);
+    }//GEN-LAST:event_jButton4ActionPerformed
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        adicionarValor(4);
+    }//GEN-LAST:event_jButton3ActionPerformed
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
+        adicionarValor(5);
+    }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
+        adicionarValor(6);
+    }//GEN-LAST:event_jButton8ActionPerformed
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton6ActionPerformed
+        adicionarValor(7);
+    }//GEN-LAST:event_jButton6ActionPerformed
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
+        adicionarValor(8);
+    }//GEN-LAST:event_jButton5ActionPerformed
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
+        adicionarValor(9);
+    }//GEN-LAST:event_jButton9ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel PainelBotoes;
     private javax.swing.JPanel PainelTabuleiro;
     private javax.swing.JPanel PainelTeclado;
     private javax.swing.JButton jButton1;

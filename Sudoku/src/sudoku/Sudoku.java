@@ -26,6 +26,10 @@ public class Sudoku {
         return jogo;
     }
 
+    public void setJogo(int[][] jogo) {
+        this.jogo = jogo;
+    }
+
     
     
     

@@ -6,12 +6,110 @@ import java.awt.Component;
 import java.awt.event.FocusAdapter;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.text.AttributeSet;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.DocumentFilter;
+import javax.swing.text.PlainDocument;
 
 
 public class SudokuPanel extends javax.swing.JPanel {
     Sudoku sudoku = new Sudoku("dificil");
     private JTextField campoSelecionado;
+    private int pontuacao = 0;
     
+    class FiltroSudoku extends DocumentFilter {
+
+        private final JTextField campo;
+
+        public FiltroSudoku(JTextField campo) {
+            this.campo = campo;
+        }
+
+        @Override
+        public void replace(FilterBypass fb, int offset, int length, String texto, AttributeSet attrs)
+                throws BadLocationException {
+
+            if (texto == null) return;
+
+            // impede mais de 1 caractere (considerando remoção/substituição)
+            if ((fb.getDocument().getLength() - length + texto.length()) > 1) return;
+
+            // só aceita dígitos 1 a 9
+            if (texto.matches("[1-9]")) {
+                super.replace(fb, offset, length, texto, attrs);
+                validarCampo(campo);
+            }
+        }
+
+        @Override
+        public void insertString(FilterBypass fb, int offset, String texto, AttributeSet attrs)
+                throws BadLocationException {
+
+            if (texto == null) return;
+
+            if ((fb.getDocument().getLength() + texto.length()) > 1) return;
+
+            if (texto.matches("[1-9]")) {
+                super.insertString(fb, offset, texto, attrs);
+                validarCampo(campo);
+            }
+        }
+
+        @Override
+        public void remove(FilterBypass fb, int offset, int length)
+                throws BadLocationException {
+            super.remove(fb, offset, length);
+            validarCampo(campo);
+        }
+    }
+    
+    private void validarCampo(JTextField campo) {
+        if (campo == null) return;
+
+        // torna este campo selecionado (para o destaque funcionar)
+        campoSelecionado = campo;
+
+        String texto = campo.getText().trim();
+        int linha = (int) campo.getClientProperty("linha");
+        int coluna = (int) campo.getClientProperty("coluna");
+
+        int[][] jogo = sudoku.getJogo();
+        int[][] gabarito = sudoku.getTabuleiro();
+
+        if (texto.isEmpty()) {
+            jogo[linha][coluna] = 0;
+            campo.setBackground(Color.WHITE);
+            campo.setEditable(true); // permanece editável
+        } else {
+            try {
+                int valor = Integer.parseInt(texto);
+                // atualiza jogo
+                jogo[linha][coluna] = valor;
+                sudoku.setJogo(jogo);
+
+                if (valor != gabarito[linha][coluna]) {
+                    // errado: fica vermelho e editável
+                    campo.setBackground(new Color(255, 180, 180));
+                    campo.setEditable(true);
+                } else {
+                    // certo: trava e fica branco
+                    campo.setBackground(Color.WHITE);
+                    campo.setEditable(false);
+                }
+            } catch (NumberFormatException ex) {
+                // não deve ocorrer por causa do filtro, mas caso ocorra:
+                campo.setBackground(Color.WHITE);
+                campo.setEditable(true);
+                jogo[linha][coluna] = 0;
+                sudoku.setJogo(jogo);
+            }
+        }
+
+        // Atualiza destaque de linha/coluna/bloco com o campo selecionado atual
+        destacarLinhaColunaBloco();
+    }
+
+
     //Esta função printa os valores do jogo no paineltabuleiro
     private void popularPainel() {
         int[][] matriz = sudoku.getJogo();
@@ -43,6 +141,10 @@ public class SudokuPanel extends javax.swing.JPanel {
                         
                         campo.setBackground(Color.WHITE);
                         campo.setCaretColor(Color.WHITE);
+                        
+                        PlainDocument doc = (PlainDocument) campo.getDocument();
+                        doc.setDocumentFilter(new FiltroSudoku(campo));
+
                     }
                 }
             }
@@ -66,10 +168,12 @@ public class SudokuPanel extends javax.swing.JPanel {
                             public void focusGained(java.awt.event.FocusEvent evt) {
                                 campoSelecionado = campo;
                                 destacarLinhaColunaBloco();
+                                
                             }
 
                             @Override
                             public void focusLost(java.awt.event.FocusEvent evt) {
+                                
                              
                             }
                         });
@@ -274,6 +378,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         jButton7 = new javax.swing.JButton();
         jButton8 = new javax.swing.JButton();
         jButton9 = new javax.swing.JButton();
+        jLabel1 = new javax.swing.JLabel();
 
         setBackground(new java.awt.Color(245, 245, 245));
 
@@ -960,27 +1065,33 @@ public class SudokuPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
+        jLabel1.setText("jLabel1");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(PainelTeclado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(PainelTabuleiro, javax.swing.GroupLayout.PREFERRED_SIZE, 497, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(251, Short.MAX_VALUE)
-                .addComponent(PainelTabuleiro, javax.swing.GroupLayout.PREFERRED_SIZE, 497, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(250, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(185, Short.MAX_VALUE)
+                .addComponent(PainelTeclado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(185, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(79, Short.MAX_VALUE)
+                .addContainerGap(51, Short.MAX_VALUE)
+                .addComponent(jLabel1)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(PainelTabuleiro, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(44, 44, 44)
+                .addGap(31, 31, 31)
                 .addComponent(PainelTeclado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(34, Short.MAX_VALUE))
+                .addContainerGap(47, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1033,6 +1144,7 @@ public class SudokuPanel extends javax.swing.JPanel {
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
     private javax.swing.JButton jButton9;
+    private javax.swing.JLabel jLabel1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JPanel jPanel2;
     private javax.swing.JPanel jPanel3;

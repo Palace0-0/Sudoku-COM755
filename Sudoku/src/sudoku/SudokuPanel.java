@@ -18,6 +18,8 @@ public class SudokuPanel extends javax.swing.JPanel {
     Sudoku sudoku = new Sudoku("dificil");
     private JTextField campoSelecionado;
     private boolean atualizacaoInterna = false;
+    private boolean carregando = false;
+
     
     
     // Variaveis relacionadas ao timer do jogo
@@ -117,8 +119,9 @@ public class SudokuPanel extends javax.swing.JPanel {
     
     private void validarCampo(JTextField campo) {
         if (campo == null) return;
+        if (carregando) return; 
 
-        // torna este campo selecionado (para o destaque funcionar)
+        // marca este campo como selecionado (para destaque)
         campoSelecionado = campo;
 
         String texto = campo.getText().trim();
@@ -128,45 +131,66 @@ public class SudokuPanel extends javax.swing.JPanel {
         int[][] jogo = sudoku.getJogo();
         int[][] gabarito = sudoku.getTabuleiro();
 
+        // se o campo foi limpo pelo usuário -> apenas limpar o jogo sem decrementar contadores
         if (texto.isEmpty()) {
             if (jogo[linha][coluna] != 0) {
-                if (jogo[linha][coluna] == gabarito[linha][coluna]) acertos--;
-                else erros--;
+                jogo[linha][coluna] = 0;            // remove do modelo
+                campo.setBackground(Color.WHITE);  // restaura cor
+                campo.setEditable(true);           // permite nova edição
+                sudoku.setJogo(jogo);              // atualiza o objeto sudoku
+                atualizarPontuacao();              // recalcula pontuação (sem mudar acertos/erros)
             }
-            jogo[linha][coluna] = 0;
+            // atualizar destaque e checar fim de jogo (aqui não fará nada diferente, mas mantém a UI consistente)
+            destacarLinhaColunaBloco();
+            verificarFimDeJogo();
+            return;
+        }
+
+        // tenta converter para número (o filtro já evita invalidos, mas mantemos proteção)
+        int valor;
+        try {
+            valor = Integer.parseInt(texto);
+        } catch (NumberFormatException ex) {
+            // caso raro — restaura estado seguro
             campo.setBackground(Color.WHITE);
             campo.setEditable(true);
+            jogo[linha][coluna] = 0;
+            sudoku.setJogo(jogo);
             atualizarPontuacao();
-        }else {
-            try {
-                int valor = Integer.parseInt(texto);
-                // atualiza jogo
-                jogo[linha][coluna] = valor;
-                sudoku.setJogo(jogo);
+            destacarLinhaColunaBloco();
+            verificarFimDeJogo();
+            return;
+        }
 
-                if (valor != gabarito[linha][coluna]) {
-                    // errado: fica vermelho e editável
-                    erros++;
-                    campo.setBackground(new Color(255, 180, 180));
-                    campo.setEditable(true);
-                    atualizarPontuacao();
-                } else {
-                    // certo: trava e fica branco
-                     acertos++;
-                    campo.setBackground(Color.WHITE);
-                    campo.setEditable(false);
-                    atualizarPontuacao();
-                }
-            } catch (NumberFormatException ex) {
-                // não deve ocorrer por causa do filtro, mas caso ocorra:
-                campo.setBackground(Color.WHITE);
-                campo.setEditable(true);
-                jogo[linha][coluna] = 0;
-                sudoku.setJogo(jogo);
+        // Se já existia um valor naquela célula, ajustar contadores para não duplicar
+        int anterior = jogo[linha][coluna];
+        if (anterior != 0) {
+            if (anterior == gabarito[linha][coluna]) {
+                // estava contado como acerto; vamos remover essa contagem antes de recontar
+                acertos = Math.max(0, acertos - 1);
+            } else {
+                // estava contado como erro; remover essa contagem
+                erros = Math.max(0, erros - 1);
             }
         }
 
-        // Atualiza destaque de linha/coluna/bloco com o campo selecionado atual
+        // atualiza o modelo com o novo valor
+        jogo[linha][coluna] = valor;
+        sudoku.setJogo(jogo);
+
+        // agora conte o novo estado (correto ou incorreto)
+        if (valor == gabarito[linha][coluna]) {
+            acertos++;
+            campo.setBackground(Color.WHITE);
+            campo.setEditable(false); // trava quando está certo
+        } else {
+            erros++;
+            campo.setBackground(new Color(255, 180, 180)); // vermelho para erro
+            campo.setEditable(true);
+        }
+
+        // atualizar pontuação e UI relacionada
+        atualizarPontuacao();
         destacarLinhaColunaBloco();
         verificarFimDeJogo();
     }
@@ -174,6 +198,9 @@ public class SudokuPanel extends javax.swing.JPanel {
 
     //Esta função printa os valores do jogo no paineltabuleiro
     private void popularPainel() {
+        
+        carregando = true; // 🔴 trava validação
+         
         int[][] matriz = sudoku.getJogo();
         Component[] blocos = PainelTabuleiro.getComponents(); // 9 JPanels
 
@@ -211,6 +238,8 @@ public class SudokuPanel extends javax.swing.JPanel {
                 }
             }
         }
+        
+        carregando = false; // 🔴 libera validação
     }
 
     //Adiciona o focus para todos os jtextfields
@@ -1328,34 +1357,28 @@ public class SudokuPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
-        //Reseta as variaveis, pontuação e timer
+        // Resetar variáveis
         erros = 0;
         acertos = 0;
         segundos = 0;
         pontuacao = 0;
+
         jLabel1.setText("Pontuação: 0");
         atualizarLabelTempo();
 
-        //Cria um novo jogo
+        // Criar novo jogo
         this.sudoku = new Sudoku("dificil");
-        
-        //Limpa o jogo antigo
-        Component[] blocos = PainelTabuleiro.getComponents();
-        for (int b = 0; b < blocos.length; b++) {
-            if (blocos[b] instanceof JPanel bloco) {
-                Component[] campos = bloco.getComponents();
-                for (int c = 0; c < campos.length; c++) {
-                    if (campos[c] instanceof JTextField campo) {
-                        campo.setText("");
-                    }
-                }
-            }
-        }
-        
-        //Printa o novo jogo no tabuleiro e no console
+
+        // Redefinir parâmetros da dificuldade
+        definirParametrosDificuldade(sudoku.getDificuldade());
+
+        // Regerar o tabuleiro visual
         popularPainel();
-        System.out.println("/n/n/n");
+
+        // Log (opcional)
+        System.out.println("\n\n\n");
         sudoku.printartabuleiro();
+
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed

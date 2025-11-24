@@ -112,7 +112,7 @@ public class Sudoku {
     
     //Este método gera o jogo em si, pois ele remove a quantia de peças do tabuleiro com base no parametro recebido
     private int[][] gerarJogo(String dificuldade){
-        
+         
         //Faz uma cópia do jogo para que assim possa ser verificado no futuro se a jogada foi correta
         int[][] jogo = new int[9][9];
         for (int i = 0; i < 9; i++) {
@@ -150,6 +150,7 @@ public class Sudoku {
 
             jogo[linha][coluna] = 0;
         }
+        
 
         return jogo;
     }

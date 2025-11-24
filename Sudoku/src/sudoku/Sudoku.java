@@ -13,6 +13,7 @@ public class Sudoku {
     
     //Construtor da classe
     public Sudoku(String dificuldade) {
+        resetarTabuleiro();
         populartabuleiro();
         this.jogo = gerarJogo(dificuldade);
         
@@ -145,7 +146,14 @@ public class Sudoku {
 
         return jogo;
     }
-    
+    private void resetarTabuleiro() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                tabuleiro[i][j] = 0;
+            }
+        }
+    }
+
     public void printartabuleiro (){
         for (int i = 0; i < tabuleiro.length; i++) {
             for (int j = 0; j < tabuleiro.length; j++) {

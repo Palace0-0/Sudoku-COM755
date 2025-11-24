@@ -31,7 +31,14 @@ public class SudokuPanel extends javax.swing.JPanel {
 
             if (texto == null) return;
 
-            // impede mais de 1 caractere (considerando remoção/substituição)
+            // Permite remover tudo (limpar campo)
+            if (texto.isEmpty()) {
+                super.replace(fb, offset, length, texto, attrs);
+                validarCampo(campo);
+                return;
+            }
+
+            // impede mais de 1 caractere
             if ((fb.getDocument().getLength() - length + texto.length()) > 1) return;
 
             // só aceita dígitos 1 a 9
@@ -47,6 +54,13 @@ public class SudokuPanel extends javax.swing.JPanel {
 
             if (texto == null) return;
 
+            // Permite inserir vazio (útil para operações internas)
+            if (texto.isEmpty()) {
+                super.insertString(fb, offset, texto, attrs);
+                validarCampo(campo);
+                return;
+            }
+
             if ((fb.getDocument().getLength() + texto.length()) > 1) return;
 
             if (texto.matches("[1-9]")) {
@@ -55,12 +69,6 @@ public class SudokuPanel extends javax.swing.JPanel {
             }
         }
 
-        @Override
-        public void remove(FilterBypass fb, int offset, int length)
-                throws BadLocationException {
-            super.remove(fb, offset, length);
-            validarCampo(campo);
-        }
     }
     
     private void validarCampo(JTextField campo) {
@@ -151,7 +159,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         }
     }
 
-
+    //Adiciona o focus para todos os jtextfields
     private void configurarcampoSelecionado(){
         for (Component c : PainelTabuleiro.getComponents()) {
             
@@ -165,6 +173,8 @@ public class SudokuPanel extends javax.swing.JPanel {
                         
                         campo.addFocusListener(new java.awt.event.FocusAdapter() {
                             @Override
+                            
+                            //Quando o jtextfield é selecionado ele salva qual é e depois destava o tabuleiro
                             public void focusGained(java.awt.event.FocusEvent evt) {
                                 campoSelecionado = campo;
                                 destacarLinhaColunaBloco();
@@ -382,6 +392,10 @@ public class SudokuPanel extends javax.swing.JPanel {
         jButton9 = new javax.swing.JButton();
         jLabel1 = new javax.swing.JLabel();
         jLabel2 = new javax.swing.JLabel();
+        PainelBotoes = new javax.swing.JPanel();
+        jButton10 = new javax.swing.JButton();
+        jButton11 = new javax.swing.JButton();
+        jButton12 = new javax.swing.JButton();
 
         setBackground(new java.awt.Color(245, 245, 245));
 
@@ -1068,38 +1082,105 @@ public class SudokuPanel extends javax.swing.JPanel {
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
-        jLabel1.setText("jLabel1");
+        jLabel1.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        jLabel1.setText("0");
 
-        jLabel2.setText("jLabel1");
+        jLabel2.setFont(new java.awt.Font("SansSerif", 0, 14)); // NOI18N
+        jLabel2.setText("00 : 00");
+
+        PainelBotoes.setBackground(new java.awt.Color(245, 245, 245));
+
+        jButton10.setBackground(new java.awt.Color(79, 115, 156));
+        jButton10.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        jButton10.setForeground(new java.awt.Color(243, 249, 255));
+        jButton10.setText("Novo jogo");
+        jButton10.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+        jButton10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton10ActionPerformed(evt);
+            }
+        });
+
+        jButton11.setBackground(new java.awt.Color(79, 115, 156));
+        jButton11.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        jButton11.setForeground(new java.awt.Color(243, 249, 255));
+        jButton11.setText("Resolver");
+        jButton11.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
+
+        jButton12.setBackground(new java.awt.Color(79, 115, 156));
+        jButton12.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N
+        jButton12.setForeground(new java.awt.Color(243, 249, 255));
+        jButton12.setText("Salvar");
+        jButton12.setBorder(new javax.swing.border.LineBorder(new java.awt.Color(210, 227, 246), 1, true));
+        jButton12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton12ActionPerformed(evt);
+            }
+        });
+
+        javax.swing.GroupLayout PainelBotoesLayout = new javax.swing.GroupLayout(PainelBotoes);
+        PainelBotoes.setLayout(PainelBotoesLayout);
+        PainelBotoesLayout.setHorizontalGroup(
+            PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PainelBotoesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addGroup(PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton10, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(jButton11, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE)
+                    .addComponent(jButton12, javax.swing.GroupLayout.DEFAULT_SIZE, 168, Short.MAX_VALUE))
+                .addContainerGap())
+        );
+        PainelBotoesLayout.setVerticalGroup(
+            PainelBotoesLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(PainelBotoesLayout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jButton10, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(jButton11, javax.swing.GroupLayout.PREFERRED_SIZE, 42, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+        );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(185, Short.MAX_VALUE)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(PainelTeclado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                        .addGroup(layout.createSequentialGroup()
-                            .addComponent(jLabel1)
-                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                            .addComponent(jLabel2))
-                        .addComponent(PainelTabuleiro, javax.swing.GroupLayout.PREFERRED_SIZE, 497, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(185, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel1)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(jLabel2))
+                    .addComponent(PainelTabuleiro, javax.swing.GroupLayout.PREFERRED_SIZE, 497, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                .addComponent(PainelBotoes, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap(96, Short.MAX_VALUE)
+                .addComponent(PainelTeclado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(288, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(51, Short.MAX_VALUE)
+                .addContainerGap(50, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel1)
                     .addComponent(jLabel2))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(PainelTabuleiro, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(PainelBotoes, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(PainelTabuleiro, javax.swing.GroupLayout.PREFERRED_SIZE, 430, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(18, 18, 18)
                 .addComponent(PainelTeclado, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(47, Short.MAX_VALUE))
+                .addContainerGap(58, Short.MAX_VALUE))
         );
     }// </editor-fold>//GEN-END:initComponents
 
@@ -1139,11 +1220,46 @@ public class SudokuPanel extends javax.swing.JPanel {
         adicionarValor(9);
     }//GEN-LAST:event_jButton9ActionPerformed
 
+    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+        //Cria um novo jogo
+        this.sudoku = new Sudoku("dificil");
+        
+        //Limpa o jogo antigo
+        Component[] blocos = PainelTabuleiro.getComponents();
+        for (int b = 0; b < blocos.length; b++) {
+            if (blocos[b] instanceof JPanel bloco) {
+                Component[] campos = bloco.getComponents();
+                for (int c = 0; c < campos.length; c++) {
+                    if (campos[c] instanceof JTextField campo) {
+                        campo.setText("");
+                    }
+                }
+            }
+        }
+        
+        //Printa o novo jogo no tabuleiro e no console
+        popularPainel();
+        System.out.println("/n/n/n");
+        sudoku.printartabuleiro();
+    }//GEN-LAST:event_jButton10ActionPerformed
+
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton11ActionPerformed
+
+    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_jButton12ActionPerformed
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JPanel PainelBotoes;
     private javax.swing.JPanel PainelTabuleiro;
     private javax.swing.JPanel PainelTeclado;
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton10;
+    private javax.swing.JButton jButton11;
+    private javax.swing.JButton jButton12;
     private javax.swing.JButton jButton2;
     private javax.swing.JButton jButton3;
     private javax.swing.JButton jButton4;

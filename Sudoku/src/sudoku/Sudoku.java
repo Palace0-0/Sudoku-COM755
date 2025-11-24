@@ -10,12 +10,14 @@ public class Sudoku {
     
     private int [][] tabuleiro = new int [9][9];
     private int [][] jogo ;
+    private String dificuldade;
     
     //Construtor da classe
     public Sudoku(String dificuldade) {
         resetarTabuleiro();
         populartabuleiro();
         this.jogo = gerarJogo(dificuldade);
+        this.dificuldade = dificuldade;
         
     }
 
@@ -31,6 +33,11 @@ public class Sudoku {
         this.jogo = jogo;
     }
 
+    public String getDificuldade() {
+        return dificuldade;
+    }
+    
+    
     
     
     

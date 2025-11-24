@@ -4,8 +4,10 @@ package sudoku;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.FocusAdapter;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.Timer;
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.DocumentFilter;
@@ -15,7 +17,24 @@ import javax.swing.text.PlainDocument;
 public class SudokuPanel extends javax.swing.JPanel {
     Sudoku sudoku = new Sudoku("dificil");
     private JTextField campoSelecionado;
+    private boolean atualizacaoInterna = false;
+    
+    
+    // Variaveis relacionadas ao timer do jogo
+    private Timer timer;
+    private int segundos = 0;
+    
+    
+    
+    //Variaveis relacionadas a pontuação
     private int pontuacao = 0;
+    private int erros = 0;
+    private int acertos = 0;
+
+    private int multiplicadorDificuldade;
+    private int penalidadeTempo;
+    private int penalidadeErro = 10; 
+
     
     class FiltroSudoku extends DocumentFilter {
 
@@ -30,6 +49,12 @@ public class SudokuPanel extends javax.swing.JPanel {
                 throws BadLocationException {
 
             if (texto == null) return;
+
+            // Caso seja uma atualização interna (do código) apenas aplicar a alteração sem validar
+            if (atualizacaoInterna) {
+                super.replace(fb, offset, length, texto, attrs);
+                return;
+            }
 
             // Permite remover tudo (limpar campo)
             if (texto.isEmpty()) {
@@ -54,6 +79,12 @@ public class SudokuPanel extends javax.swing.JPanel {
 
             if (texto == null) return;
 
+            // Atualização interna: aplica sem validar
+            if (atualizacaoInterna) {
+                super.insertString(fb, offset, texto, attrs);
+                return;
+            }
+
             // Permite inserir vazio (útil para operações internas)
             if (texto.isEmpty()) {
                 super.insertString(fb, offset, texto, attrs);
@@ -67,6 +98,19 @@ public class SudokuPanel extends javax.swing.JPanel {
                 super.insertString(fb, offset, texto, attrs);
                 validarCampo(campo);
             }
+        }
+        
+        @Override
+        public void remove(FilterBypass fb, int offset, int length)
+                throws BadLocationException {
+
+            if (atualizacaoInterna) {
+                super.remove(fb, offset, length);
+                return;
+            }
+
+            super.remove(fb, offset, length);
+            validarCampo(campo);
         }
 
     }
@@ -85,10 +129,15 @@ public class SudokuPanel extends javax.swing.JPanel {
         int[][] gabarito = sudoku.getTabuleiro();
 
         if (texto.isEmpty()) {
+            if (jogo[linha][coluna] != 0) {
+                if (jogo[linha][coluna] == gabarito[linha][coluna]) acertos--;
+                else erros--;
+            }
             jogo[linha][coluna] = 0;
             campo.setBackground(Color.WHITE);
-            campo.setEditable(true); // permanece editável
-        } else {
+            campo.setEditable(true);
+            atualizarPontuacao();
+        }else {
             try {
                 int valor = Integer.parseInt(texto);
                 // atualiza jogo
@@ -97,12 +146,16 @@ public class SudokuPanel extends javax.swing.JPanel {
 
                 if (valor != gabarito[linha][coluna]) {
                     // errado: fica vermelho e editável
+                    erros++;
                     campo.setBackground(new Color(255, 180, 180));
                     campo.setEditable(true);
+                    atualizarPontuacao();
                 } else {
                     // certo: trava e fica branco
+                     acertos++;
                     campo.setBackground(Color.WHITE);
                     campo.setEditable(false);
+                    atualizarPontuacao();
                 }
             } catch (NumberFormatException ex) {
                 // não deve ocorrer por causa do filtro, mas caso ocorra:
@@ -115,6 +168,7 @@ public class SudokuPanel extends javax.swing.JPanel {
 
         // Atualiza destaque de linha/coluna/bloco com o campo selecionado atual
         destacarLinhaColunaBloco();
+        verificarFimDeJogo();
     }
 
 
@@ -253,17 +307,15 @@ public class SudokuPanel extends javax.swing.JPanel {
             sudoku.setJogo(jogo);
             
             //Define o texto do jtextfield selecionado como o valor digitado
-            campoSelecionado.setText(String.valueOf(valor));
-            
-            //Caso o valor não seja o certo o campo fica vermelhor
-            if(jogo[linha][coluna] != gabaritro[linha][coluna]){
-                campoSelecionado.setBackground(new Color(255, 180, 180));
-                
-            }else{
-                campoSelecionado.setEditable(false);
-                campoSelecionado.setBackground(Color.WHITE);
+            atualizacaoInterna = true;
+            try {
+                campoSelecionado.setText(String.valueOf(valor));
+            } finally {
+                atualizacaoInterna = false;
             }
-            
+
+            // Chama validação UMA vez só
+            validarCampo(campoSelecionado);  
         }
         
         
@@ -271,16 +323,71 @@ public class SudokuPanel extends javax.swing.JPanel {
 
     }
     
+    //Atualiza o jlabel do timer
+    private void atualizarLabelTempo() {
+        int min = segundos / 60;
+        int seg = segundos % 60;
+        jLabel2.setText(String.format("%02d:%02d", min, seg));
+    }
+    
+    //Define os parametros para calcular a pontuação
+    private void definirParametrosDificuldade(String dif) {
+        switch (dif.toLowerCase()) {
+            case "facil" -> {
+                multiplicadorDificuldade = 5;
+                penalidadeTempo = 30;
+            }
+            case "medio" -> {
+                multiplicadorDificuldade = 10;
+                penalidadeTempo = 20;
+            }
+            case "dificil" -> {
+                multiplicadorDificuldade = 15;
+                penalidadeTempo = 10;
+            }
+        }
+    }
+    
+    private void atualizarPontuacao() {
+        pontuacao = 
+            (acertos * multiplicadorDificuldade)
+            - (erros * penalidadeErro)
+            - (segundos / penalidadeTempo);
+
+        jLabel1.setText("Pontuação: " + pontuacao);
+    }
+    
+    private void verificarFimDeJogo() {
+        int[][] gabarito = sudoku.getTabuleiro();
+        int[][] jogo = sudoku.getJogo();
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (jogo[i][j] != gabarito[i][j]) return; // ainda não terminou
+            }
+        }
+        // Se chegou aqui, terminou
+        timer.stop();
+        JOptionPane.showMessageDialog(this, "Parabéns! Sudoku completado!");
+    }
+    
+    
     
     
     public SudokuPanel() {
         
         initComponents();
+        definirParametrosDificuldade(sudoku.getDificuldade()); 
         popularPainel();
         sudoku.printartabuleiro();
         configurarcampoSelecionado();
         
-        
+        timer = new Timer(1000, e -> {
+            segundos++;
+            atualizarLabelTempo();
+        });
+        timer.start();
+
+
         
     }
 
@@ -1221,6 +1328,14 @@ public class SudokuPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+        //Reseta as variaveis, pontuação e timer
+        erros = 0;
+        acertos = 0;
+        segundos = 0;
+        pontuacao = 0;
+        jLabel1.setText("Pontuação: 0");
+        atualizarLabelTempo();
+
         //Cria um novo jogo
         this.sudoku = new Sudoku("dificil");
         

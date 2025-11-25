@@ -13,10 +13,24 @@ public class Mainframe extends javax.swing.JFrame {
     
     private CardLayout cardLayout;
     private JPanel container;
+    
+    //Método para inicair o jogo ja com a dificuldade selecionada
+    public void iniciarSudoku(String dificuldade) {
+
+    // Criar dinamicamente um novo painel do jogo
+    SudokuPanel sudokuPanel = new SudokuPanel(dificuldade);
+
+    // Adicionar ao CardLayout
+    container.add(sudokuPanel, "jogo");
+
+    // Mostrar tela do jogo
+    mostrarTela("jogo");
+    }
 
     public Mainframe() {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(1200, 400);
          
         // Cria o CardLayout e o painel container
         cardLayout = new CardLayout();
@@ -24,15 +38,15 @@ public class Mainframe extends javax.swing.JFrame {
 
         // Cria os painéis
         MenuPanel menuPanel = new MenuPanel(this);
-        SudokuPanel sudokuPanel = new SudokuPanel();
+        DificuldadesPanel dificuldadePanel = new DificuldadesPanel(this);
 
         // Adiciona “cartas” ao container
         container.add(menuPanel, "menu");
-        container.add(sudokuPanel, "jogo");
+        container.add(dificuldadePanel, "dificuldade");
+        
 
         add(container);
         
-        //mostrarTela("menu");
         setVisible(true);
     }
 

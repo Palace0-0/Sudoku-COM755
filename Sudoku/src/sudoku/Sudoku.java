@@ -126,12 +126,15 @@ public class Sudoku {
         int qtdRemover = 0;
         switch (dificuldade.toLowerCase()) {
             case "facil":
+                System.out.println("Jogo facil");
                 qtdRemover = 30;
                 break;
             case "medio":
+                System.out.println("Jogo medio");
                 qtdRemover = 40;
                 break;
             case "dificil":
+                System.out.println("Jogo dificil");
                 qtdRemover = 50;
                 break;
             

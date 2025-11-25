@@ -15,16 +15,18 @@ import javax.swing.text.PlainDocument;
 
 
 public class SudokuPanel extends javax.swing.JPanel {
-    Sudoku sudoku = new Sudoku("dificil");
+    private Sudoku sudoku;
     private JTextField campoSelecionado;
     private boolean atualizacaoInterna = false;
     private boolean carregando = false;
+    private String dificuldade;
 
     
     
     // Variaveis relacionadas ao timer do jogo
     private Timer timer;
     private int segundos = 0;
+    private Boolean startTimer = false;
     
     
     
@@ -37,7 +39,8 @@ public class SudokuPanel extends javax.swing.JPanel {
     private int penalidadeTempo;
     private int penalidadeErro = 10; 
 
-    
+
+
     class FiltroSudoku extends DocumentFilter {
 
         private final JTextField campo;
@@ -402,22 +405,30 @@ public class SudokuPanel extends javax.swing.JPanel {
     
     
     
-    public SudokuPanel() {
+    public SudokuPanel(String dificuldade) {
         
+        //Criar sudoku usando a dificuldade escolhida e salva a dificuldade para utilizar o botão novo jogo
+        this.sudoku = new Sudoku(dificuldade);
+        this.dificuldade = dificuldade;
+
+        //Timer deve iniciar
+        //this.startTimer = true;
+
+        //Monta toda a interface
         initComponents();
-        definirParametrosDificuldade(sudoku.getDificuldade()); 
+        definirParametrosDificuldade(dificuldade);
         popularPainel();
-        sudoku.printartabuleiro();
         configurarcampoSelecionado();
-        
-        timer = new Timer(1000, e -> {
-            segundos++;
-            atualizarLabelTempo();
-        });
-        timer.start();
+        sudoku.printartabuleiro();
 
-
-        
+        //Inicia timer
+        //if (startTimer) {
+            timer = new Timer(1000, e -> {
+                segundos++;
+                atualizarLabelTempo();
+            });
+            timer.start();
+        //}
     }
 
     
@@ -1357,6 +1368,8 @@ public class SudokuPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton9ActionPerformed
 
     private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton10ActionPerformed
+        System.out.println("");
+        
         // Resetar variáveis
         erros = 0;
         acertos = 0;
@@ -1367,7 +1380,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         atualizarLabelTempo();
 
         // Criar novo jogo
-        this.sudoku = new Sudoku("dificil");
+        this.sudoku = new Sudoku(dificuldade);
 
         // Redefinir parâmetros da dificuldade
         definirParametrosDificuldade(sudoku.getDificuldade());
@@ -1376,7 +1389,6 @@ public class SudokuPanel extends javax.swing.JPanel {
         popularPainel();
 
         // Log (opcional)
-        System.out.println("\n\n\n");
         sudoku.printartabuleiro();
 
     }//GEN-LAST:event_jButton10ActionPerformed

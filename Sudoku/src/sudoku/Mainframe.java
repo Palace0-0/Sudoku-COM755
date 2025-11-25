@@ -26,7 +26,12 @@ public class Mainframe extends javax.swing.JFrame {
     // Mostrar tela do jogo
     mostrarTela("jogo");
     }
-
+    
+     // Método para trocar de tela
+    public void mostrarTela(String nome) {
+        cardLayout.show(container, nome);
+    }
+    
     public Mainframe() {
 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -50,10 +55,7 @@ public class Mainframe extends javax.swing.JFrame {
         setVisible(true);
     }
 
-    // Método para trocar de tela
-    public void mostrarTela(String nome) {
-        cardLayout.show(container, nome);
-    }
+   
 
    
     @SuppressWarnings("unchecked")

@@ -165,15 +165,29 @@ public class Sudoku {
         }
     }
 
-    public void printartabuleiro (){
-        for (int i = 0; i < tabuleiro.length; i++) {
-            for (int j = 0; j < tabuleiro.length; j++) {
-                System.out.print(tabuleiro[i][j]);
+    public void printartabuleiro() {
+        for (int i = 0; i < 9; i++) {
+
+            // Linha de separação dos blocos
+            if (i % 3 == 0) {
+                System.out.println(" -------------------------");
             }
-            System.out.println("");
+
+            for (int j = 0; j < 9; j++) {
+
+                if (j % 3 == 0) {
+                    System.out.print(" | ");
+                }
+
+                System.out.print(tabuleiro[i][j] + " ");
+            }
+
+            System.out.println(" |");
         }
+
+        System.out.println(" -------------------------\n");
     }
-    
+
     
     
  

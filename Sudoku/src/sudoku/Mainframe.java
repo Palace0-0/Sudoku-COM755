@@ -3,29 +3,42 @@ package sudoku;
 
 import com.formdev.flatlaf.FlatLightLaf;
 import java.awt.BorderLayout;
+import java.awt.CardLayout;
 import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 
 public class Mainframe extends javax.swing.JFrame {
 
     
+    private CardLayout cardLayout;
+    private JPanel container;
+
     public Mainframe() {
-        
-        
-        
-        
+
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+         
+        // Cria o CardLayout e o painel container
+        cardLayout = new CardLayout();
+        container = new JPanel(cardLayout);
+
+        // Cria os painéis
+        MenuPanel menuPanel = new MenuPanel(this);
+        SudokuPanel sudokuPanel = new SudokuPanel();
+
+        // Adiciona “cartas” ao container
+        container.add(menuPanel, "menu");
+        container.add(sudokuPanel, "jogo");
+
+        add(container);
         
-        //setExtendedState(JFrame.MAXIMIZED_BOTH);
+        //mostrarTela("menu");
         setVisible(true);
-        
-        // Cria o painel SudokuPanel e adiciona ao JFrame
-        SudokuPanel painel = new SudokuPanel();
-        add(painel, BorderLayout.CENTER);
-        
-       
-        
-        
+    }
+
+    // Método para trocar de tela
+    public void mostrarTela(String nome) {
+        cardLayout.show(container, nome);
     }
 
    

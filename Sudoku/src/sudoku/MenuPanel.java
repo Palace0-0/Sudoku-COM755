@@ -25,7 +25,6 @@ public class MenuPanel extends javax.swing.JPanel {
         Color azulSidebar = new Color(50, 75, 100); 
         Color azulBotaoPrimario = new Color(79, 115, 156); 
         Color azulClaroFundo = new Color(240, 245, 255);
-        Color offWhitePainel = new Color(252, 253, 255); 
         Color corTextoMenuSecundario = new Color(0,0,0); 
         Color corTextoConteudoSecundario = new Color(100, 100, 100);
 
@@ -36,7 +35,7 @@ public class MenuPanel extends javax.swing.JPanel {
         // --- 1. CONFIGURAÇÃO GERAL E FUNDOS DOS PAINÉIS ---
         this.setBackground(azulClaroFundo); 
         PainelMenuLateral.setBackground(azulSidebar); 
-        PainelConteudoPrincipal.setBackground(offWhitePainel); 
+        //PainelConteudoPrincipal.setBackground(offWhitePainel); 
         PainelMenuLateral.setBorder(BorderFactory.createMatteBorder(0, 0, 0, 1, new Color(40, 60, 80))); 
 
         // --- 2. LOGO, BOAS-VINDAS E MASCOTE (NA ÁREA PRINCIPAL) ---
@@ -255,7 +254,7 @@ public class MenuPanel extends javax.swing.JPanel {
 
         add(PainelMenuLateral, java.awt.BorderLayout.LINE_START);
 
-        PainelConteudoPrincipal.setBackground(new java.awt.Color(252, 253, 255));
+        PainelConteudoPrincipal.setBackground(new java.awt.Color(240, 245, 255));
         PainelConteudoPrincipal.setLayout(new java.awt.BorderLayout());
 
         lblLogo.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Logo_Sudoku.png"))); // NOI18N
@@ -264,7 +263,7 @@ public class MenuPanel extends javax.swing.JPanel {
         lblBoasVindas.setText("jLabel2");
         PainelConteudoPrincipal.add(lblBoasVindas, java.awt.BorderLayout.PAGE_START);
 
-        PainelImagemHamster.setBackground(new java.awt.Color(252, 253, 255));
+        PainelImagemHamster.setBackground(new java.awt.Color(240, 245, 255));
 
         lblHamster.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagens/Mascote_Sudoku.png"))); // NOI18N
 

@@ -544,7 +544,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         jButton11 = new javax.swing.JButton();
         jButton12 = new javax.swing.JButton();
 
-        setBackground(new java.awt.Color(240, 245, 255));
+        setBackground(new java.awt.Color(245, 245, 245));
 
         PainelTabuleiro.setBackground(new java.awt.Color(129, 172, 220));
         PainelTabuleiro.setBorder(javax.swing.BorderFactory.createMatteBorder(4, 4, 4, 4, new java.awt.Color(129, 172, 220)));

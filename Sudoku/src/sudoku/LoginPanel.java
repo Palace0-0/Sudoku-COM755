@@ -196,7 +196,69 @@ public class LoginPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCadastrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCadastrarActionPerformed
+        String login = txtUsuario.getText();
+        String senha = txtSenha.getText();
 
+        // REGRA 1: Não pode ter espaço
+        if (login.isEmpty() || senha.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Preencha usuário e senha para cadastrar.");
+            return;
+        }
+        
+        // REGRA 2: Espaços em Branco (Sua exigência principal)
+        if (login.contains(" ") || senha.contains(" ")) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "Usuário e Senha NÃO podem conter espaços.", "Formato Inválido", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        
+        // REGRA 3: Tamanho Mínimo (Segurança básica)
+        if (login.length() < 3) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "O usuário deve ter pelo menos 3 caracteres.", "Muito Curto", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+        if (senha.length() < 4) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "A senha deve ter pelo menos 4 caracteres.", "Senha Fraca", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        // REGRA 4: Caracteres Especiais no Usuário (Opcional, mas recomendado)
+        // "matches" usa Regex. [a-zA-Z0-9]+ significa: Só aceita letras e números.
+        if (!login.matches("[a-zA-Z0-9]+")) {
+            javax.swing.JOptionPane.showMessageDialog(this, 
+                "O usuário deve conter apenas letras e números (sem acentos ou símbolos).", "Caractere Inválido", javax.swing.JOptionPane.WARNING_MESSAGE);
+            return;
+        }
+
+        String sql = "INSERT INTO usuarios (login, senha) VALUES (?, SHA1(?))";
+        
+        try {
+            //Recebe a coneção la do Mainframe e prepara a querry
+            java.sql.Connection conn = DBConnection.getInstance().getConnection();
+            java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+            
+            stmt.setString(1, login);
+            stmt.setString(2, senha);
+            
+            //Executa a querry
+            stmt.executeUpdate();
+            javax.swing.JOptionPane.showMessageDialog(this, "Conta criada com sucesso! Agora clique em ENTRAR.");
+            
+            //Limpa os campos
+            txtUsuario.setText("");
+            txtSenha.setText("");
+            
+            //Fecha a statement
+            stmt.close();
+  
+        } catch (java.sql.SQLIntegrityConstraintViolationException ex) {
+            // Esse erro específico acontece se tentar cadastrar um login que já existe (Unique Key)
+            javax.swing.JOptionPane.showMessageDialog(this, "Este nome de usuário já está em uso.");
+        } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Erro ao cadastrar: " + e.getMessage());
+        }
     }//GEN-LAST:event_btnCadastrarActionPerformed
 
     private void btnEntrarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEntrarActionPerformed
@@ -238,8 +300,8 @@ public class LoginPanel extends javax.swing.JPanel {
             }else{
                 javax.swing.JOptionPane.showMessageDialog(this, "Usuário ou senha incorretos!", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
-            //Fecha as coisas temporarios relacionadas a conecção
             
+            //Fecha as coisas temporarios relacionadas a conecção
             rs.close();
             stmt.close();
             
@@ -247,8 +309,6 @@ public class LoginPanel extends javax.swing.JPanel {
             javax.swing.JOptionPane.showMessageDialog(this, "Erro de conexão: " + e.getMessage());
             e.printStackTrace();
         }
-        
-        main.mostrarTela("menu");
     }//GEN-LAST:event_btnEntrarActionPerformed
 
 

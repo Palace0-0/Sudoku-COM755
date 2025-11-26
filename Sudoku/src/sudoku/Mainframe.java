@@ -44,15 +44,28 @@ public class Mainframe extends javax.swing.JFrame {
         // Cria os painéis
         MenuPanel menuPanel = new MenuPanel(this);
         DificuldadesPanel dificuldadePanel = new DificuldadesPanel(this);
+        LoginPanel loginPanel = new LoginPanel(this);
 
         // Adiciona “cartas” ao container
         container.add(menuPanel, "menu");
         container.add(dificuldadePanel, "dificuldade");
+        container.add(loginPanel, "login");
+        
         
 
         add(container);
         
+        
+        try {
+            DBConnection.getInstance(); // Isso vai printar "Conexão realizada com sucesso!" no console
+        } catch (Exception e) {
+            System.out.println("Deu ruim!");
+        }
+        
+        mostrarTela("login");
         setVisible(true);
+        
+        
     }
 
    

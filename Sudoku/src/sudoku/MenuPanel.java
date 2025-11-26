@@ -24,7 +24,7 @@ public class MenuPanel extends javax.swing.JPanel {
         jButton3 = new javax.swing.JButton();
         jButton4 = new javax.swing.JButton();
 
-        setBackground(new java.awt.Color(245, 245, 245));
+        setBackground(new java.awt.Color(240, 245, 255));
 
         PainelBotoes.setBackground(new java.awt.Color(245, 245, 245));
 

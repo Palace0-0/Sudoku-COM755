@@ -217,16 +217,35 @@ public class LoginPanel extends javax.swing.JPanel {
             java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
             
             stmt.setString(1, User);
-            stmt.setString(1, Senha);
+            stmt.setString(2, Senha);
             
             java.sql.ResultSet rs = stmt.executeQuery();
             
             //Verifica se o user esta cadastrado
             if(rs.next()){
-            
+                
+                int idBanco = rs.getInt("id");
+                String nomeBanco = rs.getString("login");
+
+                //Cria o usuario que ira ser salvo para uso posterior na aplicação
+                Usuario u = new Usuario(idBanco, nomeBanco);
+                SessaoUsuario.setUsuarioLogado(u);
+
+                //Limpa os campos e muda a tela
+                txtSenha.setText("");
+                txtUsuario.setText("");
+                main.mostrarTela("menu");
+            }else{
+                javax.swing.JOptionPane.showMessageDialog(this, "Usuário ou senha incorretos!", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
             }
+            //Fecha as coisas temporarios relacionadas a conecção
+            
+            rs.close();
+            stmt.close();
             
         } catch (Exception e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Erro de conexão: " + e.getMessage());
+            e.printStackTrace();
         }
         
         main.mostrarTela("menu");

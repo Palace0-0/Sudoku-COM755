@@ -102,6 +102,9 @@ public class LoginPanel extends javax.swing.JPanel {
         initComponents();
         estilizar();
         
+        txtSenha.setText("1234");
+        txtUsuario.setText("admin");
+        
         //Faz o Enter funcionar como um clique no botão Entrar
         javax.swing.SwingUtilities.invokeLater(() -> {
         // Verifica se já está anexado a uma janela para evitar erro
@@ -126,7 +129,7 @@ public class LoginPanel extends javax.swing.JPanel {
         btnEntrar = new javax.swing.JButton();
         lblLogo = new javax.swing.JLabel();
 
-        setBackground(new java.awt.Color(245, 245, 245));
+        setBackground(new java.awt.Color(240, 245, 255));
 
         PainelLogin.setBackground(new java.awt.Color(255, 255, 255));
 
@@ -187,13 +190,11 @@ public class LoginPanel extends javax.swing.JPanel {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap(190, Short.MAX_VALUE)
-                .addComponent(PainelLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(190, Short.MAX_VALUE))
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(lblLogo)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(208, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(PainelLogin, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lblLogo))
+                .addContainerGap(209, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)

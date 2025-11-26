@@ -101,6 +101,17 @@ public class LoginPanel extends javax.swing.JPanel {
         this.main = main; 
         initComponents();
         estilizar();
+        
+        //Faz o Enter funcionar como um clique no botão Entrar
+        javax.swing.SwingUtilities.invokeLater(() -> {
+        // Verifica se já está anexado a uma janela para evitar erro
+            if (this.getRootPane() != null) {
+                this.getRootPane().setDefaultButton(btnEntrar);
+
+                //Já dá o foco no campo de usuário automaticamente
+                txtUsuario.requestFocusInWindow();
+            }
+        });
     }
 
  

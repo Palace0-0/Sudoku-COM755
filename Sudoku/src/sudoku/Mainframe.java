@@ -27,7 +27,7 @@ public class Mainframe extends javax.swing.JFrame {
         mostrarTela("jogo");
     }
     
-    //Método para inicair o jogo ja com a dificuldade selecionada
+
     public void iniciarMenu() {
         
         MenuPanel menuPanel = new MenuPanel(this);
@@ -36,6 +36,17 @@ public class Mainframe extends javax.swing.JFrame {
 
  
         mostrarTela("menu");
+    }
+    
+
+    public void iniciarContinuar() {
+        
+        ContinuarPanel continuarPanel = new ContinuarPanel(this);
+
+        container.add(continuarPanel, "continuar"); 
+
+ 
+        mostrarTela("continuar");
     }
     
      // Método para trocar de tela

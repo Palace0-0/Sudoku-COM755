@@ -308,7 +308,8 @@ public class LoginPanel extends javax.swing.JPanel {
                 //Limpa os campos e muda a tela
                 txtSenha.setText("");
                 txtUsuario.setText("");
-                main.mostrarTela("menu");
+                
+                main.iniciarMenu();
             }else{
                 javax.swing.JOptionPane.showMessageDialog(this, "Usuário ou senha incorretos!", "Erro", javax.swing.JOptionPane.ERROR_MESSAGE);
             }

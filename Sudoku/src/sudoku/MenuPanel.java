@@ -18,19 +18,20 @@ import javax.swing.border.LineBorder;
 
 public class MenuPanel extends javax.swing.JPanel {
     private Mainframe main;
-    
-  
+
+ 
     private void estilizar() {
         // --- PALETA DE CORES ---
         Color azulSidebar = new Color(50, 75, 100); 
         Color azulBotaoPrimario = new Color(79, 115, 156); 
         Color azulClaroFundo = new Color(240, 245, 255);
         Color offWhitePainel = new Color(252, 253, 255); 
-        Color corTextoMenuSecundario = new Color(180, 180, 180); 
+        Color corTextoMenuSecundario = new Color(0,0,0); 
         Color corTextoConteudoSecundario = new Color(100, 100, 100);
 
         // Cores de Borda e Destaque
         Color corBordaSair = new Color(90, 120, 150); // Borda sutil para o Sair
+        Dimension buttonSize = new Dimension(200, 40);
 
         // --- 1. CONFIGURAÇÃO GERAL E FUNDOS DOS PAINÉIS ---
         this.setBackground(azulClaroFundo); 
@@ -75,7 +76,6 @@ public class MenuPanel extends javax.swing.JPanel {
             btn.setAlignmentX(Component.CENTER_ALIGNMENT); 
 
             // Define o tamanho MÁXIMO e PREFERIDO (ex: 200px de largura)
-            Dimension buttonSize = new Dimension(200, 40);
             btn.setPreferredSize(buttonSize);
             btn.setMaximumSize(buttonSize);
 
@@ -97,9 +97,6 @@ public class MenuPanel extends javax.swing.JPanel {
             // Mantemos o arredondamento padrão do "roundRect" e aumentamos o padding
             btnNovoJogo.setBorder(BorderFactory.createEmptyBorder(18, 30, 18, 30)); 
 
-            // Se você quiser um arredondamento *mais* visível:
-            // Use FlatClientProperties se estiver usando FlatLaf. Exemplo:
-            // btnNovoJogo.putClientProperty("JButton.arc", 999); // Arredonda o máximo possível
         }
 
         // --- 5. BOTÃO SAIR (NO RODAPÉ COM BORDA) ---
@@ -124,8 +121,9 @@ public class MenuPanel extends javax.swing.JPanel {
             btnSair.setBorder(new CompoundBorder(line, empty)); 
 
             // O botão Sair não deve ter o tamanho fixo dos outros botões
-            //btnSair.setPreferredSize(null);
-            //btnSair.setMaximumSize(null);
+            
+            btnSair.setPreferredSize(buttonSize);
+            btnSair.setMaximumSize(buttonSize);
 
             PainelMenuLateral.add(btnSair);
         }
@@ -137,13 +135,10 @@ public class MenuPanel extends javax.swing.JPanel {
         
         estilizar();
         
-        //Pega o nome do user atraves da variavel estatica e atualiza a tela
-        Usuario usuarioLogado = SessaoUsuario.getUsuarioLogado();
+      Usuario usuarioLogado = SessaoUsuario.getUsuarioLogado();
         if(usuarioLogado != null){
             lblBoasVindas.setText("Seja bem-vindo, "+ usuarioLogado.getLogin());
-            System.out.println("A!");
         }else{
-            System.out.println(usuarioLogado.getLogin());
             lblBoasVindas.setText("Bem-vindo(a)!");
             main.mostrarTela("login");
         }
@@ -296,7 +291,7 @@ public class MenuPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnNovoJogoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnNovoJogoActionPerformed
-
+        
     }//GEN-LAST:event_btnNovoJogoActionPerformed
 
     private void btnContinuarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnContinuarActionPerformed
@@ -309,7 +304,7 @@ public class MenuPanel extends javax.swing.JPanel {
 
     private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed
         SessaoUsuario.logout();
-        main.mostrarTela("menu");
+        main.mostrarTela("login");
     }//GEN-LAST:event_btnSairActionPerformed
 
     private void btnRankingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRankingActionPerformed

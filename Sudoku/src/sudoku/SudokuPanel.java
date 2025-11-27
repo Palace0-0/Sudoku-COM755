@@ -391,16 +391,54 @@ public class SudokuPanel extends javax.swing.JPanel {
     }
     
     private void verificarFimDeJogo() {
-        int[][] gabarito = sudoku.getTabuleiro();
+        int[][] gabaritoM = sudoku.getTabuleiro();
         int[][] jogo = sudoku.getJogo();
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
-                if (jogo[i][j] != gabarito[i][j]) return; // ainda não terminou
+                if (jogo[i][j] != gabaritoM[i][j]) return; // ainda não terminou
             }
         }
         // Se chegou aqui, terminou
         timer.stop();
         JOptionPane.showMessageDialog(this, "Parabéns! Sudoku completado!");
+        
+        String jogoAtual = converterMatrizParaString(jogo);
+        String gabarito = converterMatrizParaString(gabaritoM);
+        
+        Usuario user = SessaoUsuario.getUsuarioLogado();
+        
+        java.sql.Date dataHoje = new java.sql.Date(System.currentTimeMillis());
+
+        
+        String sql = "INSERT INTO partidas " +
+                     "(usuario_id, dificuldade, gabarito, jogo_atual, tempo_decorrido, pontuacao, status, data_criacao, data_ultima_jogada) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        try {
+            java.sql.Connection conn = DBConnection.getInstance().getConnection();
+            java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+            
+            stmt.setInt(1, user.getId());          
+            stmt.setString(2, dificuldade);        
+            stmt.setString(3, gabarito);           
+            stmt.setString(4, jogoAtual);          
+            stmt.setInt(5, segundos);              
+            stmt.setInt(6, 100000);             
+            stmt.setString(7, "COMPLETO");     
+            stmt.setDate(8, dataHoje);             
+            stmt.setDate(9, dataHoje);
+            
+            stmt.executeUpdate();
+            stmt.close();
+            
+            
+            main.mostrarTela("menu");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(null, "Erro ao salvar: " + e.getMessage());
+        }
+        
+        
     }
     
     public String converterMatrizParaString(int[][] matriz) {
@@ -1416,7 +1454,6 @@ public class SudokuPanel extends javax.swing.JPanel {
         //Transformando jogo e o gabarito em uma String de 81 possições
         String jogoAtual = converterMatrizParaString(sudoku.getJogo());
         String gabarito = converterMatrizParaString(sudoku.getTabuleiro());
-        String tempoFormatado = String.format("%02d:%02d", segundos / 60, segundos % 60);
         
         Usuario user = SessaoUsuario.getUsuarioLogado();
         
@@ -1446,7 +1483,7 @@ public class SudokuPanel extends javax.swing.JPanel {
             
             
             System.out.println("Salvo com sucesso!");
-            main.mostrarTela("menu8");
+            main.mostrarTela("menu");
             
         } catch (Exception e) {
             e.printStackTrace();

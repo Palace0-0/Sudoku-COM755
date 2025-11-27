@@ -422,7 +422,7 @@ public class SudokuPanel extends javax.swing.JPanel {
             stmt.setString(3, gabarito);           
             stmt.setString(4, jogoAtual);          
             stmt.setInt(5, segundos);              
-            stmt.setInt(6, 100000);             
+            stmt.setInt(6, pontuacao);             
             stmt.setString(7, "COMPLETO");     
             stmt.setDate(8, dataHoje);             
             stmt.setDate(9, dataHoje);

@@ -14,7 +14,7 @@ public class ContinuarPanel extends javax.swing.JPanel {
     private DefaultTableModel modeloTabela;
     private Mainframe main;
 
-    public void carregarTabela() {
+    private void carregarTabela() {
         modeloTabela = new DefaultTableModel(new Object[]{"ID", "Dificuldade", "Tempo", "Pontuação", "Data"}, 0);
         jTable1.setModel(modeloTabela);
 

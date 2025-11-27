@@ -14,7 +14,7 @@ public class RankingPanel extends javax.swing.JPanel {
     private DefaultTableModel modeloTabela;
     private Mainframe main;
 
-    public void carregarTabela() {
+    private void carregarTabela() {
         modeloTabela = new DefaultTableModel(new Object[]{"Usuário", "Dificuldade", "Tempo", "Pontuação"}, 0);
         jTable1.setModel(modeloTabela);
 

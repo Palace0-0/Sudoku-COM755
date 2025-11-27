@@ -18,7 +18,7 @@ public class Mainframe extends javax.swing.JFrame {
     public void iniciarSudoku(String dificuldade) {
 
         // Criar dinamicamente um novo painel do jogo
-        SudokuPanel sudokuPanel = new SudokuPanel(dificuldade);
+        SudokuPanel sudokuPanel = new SudokuPanel(dificuldade, this);
 
         // Adicionar ao CardLayout
         container.add(sudokuPanel, "jogo");

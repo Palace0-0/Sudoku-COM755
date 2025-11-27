@@ -15,6 +15,7 @@ import javax.swing.text.PlainDocument;
 
 
 public class SudokuPanel extends javax.swing.JPanel {
+    private Mainframe main;
     private Sudoku sudoku;
     private JTextField campoSelecionado;
     private boolean atualizacaoInterna = false;
@@ -402,14 +403,29 @@ public class SudokuPanel extends javax.swing.JPanel {
         JOptionPane.showMessageDialog(this, "Parabéns! Sudoku completado!");
     }
     
+    public String converterMatrizParaString(int[][] matriz) {
+        StringBuilder sb = new StringBuilder();
+
+        // Percorre as linhas (0 a 8)
+        for (int i = 0; i < matriz.length; i++) {
+            // Percorre as colunas (0 a 8)
+            for (int j = 0; j < matriz[i].length; j++) {
+                // Adiciona o número na string
+                sb.append(matriz[i][j]);
+            }
+        }
+
+        return sb.toString(); // Retorna a string com 81 caracteres
+    }
     
     
     
-    public SudokuPanel(String dificuldade) {
+    public SudokuPanel(String dificuldade, Mainframe main) {
         
         //Criar sudoku usando a dificuldade escolhida e salva a dificuldade para utilizar o botão novo jogo
         this.sudoku = new Sudoku(dificuldade);
         this.dificuldade = dificuldade;
+        this.main = main;
 
         //Timer deve iniciar
         //this.startTimer = true;
@@ -1397,8 +1413,47 @@ public class SudokuPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed
-        int[][] jogo = sudoku.getJogo();
-        int[][] gabarito = sudoku.getTabuleiro();
+        //Transformando jogo e o gabarito em uma String de 81 possições
+        String jogoAtual = converterMatrizParaString(sudoku.getJogo());
+        String gabarito = converterMatrizParaString(sudoku.getTabuleiro());
+        String tempoFormatado = String.format("%02d:%02d", segundos / 60, segundos % 60);
+        
+        Usuario user = SessaoUsuario.getUsuarioLogado();
+        
+        java.sql.Date dataHoje = new java.sql.Date(System.currentTimeMillis());
+
+        
+        String sql = "INSERT INTO partidas " +
+                     "(usuario_id, dificuldade, gabarito, jogo_atual, tempo_decorrido, pontuacao, status, data_criacao, data_ultima_jogada) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
+        try {
+            java.sql.Connection conn = DBConnection.getInstance().getConnection();
+            java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+            
+            stmt.setInt(1, user.getId());          
+            stmt.setString(2, dificuldade);        
+            stmt.setString(3, gabarito);           
+            stmt.setString(4, jogoAtual);          
+            stmt.setInt(5, segundos);              
+            stmt.setInt(6, pontuacao);             
+            stmt.setString(7, "EM_ANDAMENTO");     
+            stmt.setDate(8, dataHoje);             
+            stmt.setDate(9, dataHoje);
+            
+            stmt.executeUpdate();
+            stmt.close();
+            
+            
+            System.out.println("Salvo com sucesso!");
+            main.mostrarTela("menu8");
+            
+        } catch (Exception e) {
+            e.printStackTrace();
+            javax.swing.JOptionPane.showMessageDialog(null, "Erro ao salvar: " + e.getMessage());
+        }
+       
+        
     }//GEN-LAST:event_jButton12ActionPerformed
 
 

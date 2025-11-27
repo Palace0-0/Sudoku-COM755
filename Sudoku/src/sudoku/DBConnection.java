@@ -29,7 +29,7 @@ public class DBConnection {
     
     // Padrão Singleton: Garante que só existe UMA conexão aberta no sistema todo
     public static DBConnection getInstance() {
-        if (instance == null) {
+        if (instance == null ) {
             instance = new DBConnection();
         }
         return instance;

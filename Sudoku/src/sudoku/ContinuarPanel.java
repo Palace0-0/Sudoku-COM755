@@ -252,7 +252,7 @@ public class ContinuarPanel extends javax.swing.JPanel {
         String gabarito = (String) jTable1.getValueAt(linhaSelecionada, 6);
         String jogo_atual = (String) jTable1.getValueAt(linhaSelecionada, 7);
         
-        main.continuarSudoku(id, pontuacao, dificuldade, gabarito, jogo_atual, tempo);
+        main.continuarSudoku(id, pontuacao, dificuldade, gabarito, jogo_atual, tempo, false);
         
         
     }//GEN-LAST:event_btnJogarActionPerformed

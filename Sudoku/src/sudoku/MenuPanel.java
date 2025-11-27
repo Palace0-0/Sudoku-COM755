@@ -361,10 +361,10 @@ public class MenuPanel extends javax.swing.JPanel {
                
 
                 String sql = "SELECT MAX(id) as ultimo_id FROM partidas WHERE usuario_id = ?";
-
+                java.sql.Connection conn = DBConnection.getInstance().getConnection();
+                
                 // Abre conexão apenas para esta consulta
-                try (java.sql.Connection conn = DBConnection.getInstance().getConnection();
-                     java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+                try (java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
 
                     stmt.setInt(1, user.getId());
 
@@ -379,7 +379,7 @@ public class MenuPanel extends javax.swing.JPanel {
                             novoId = ultimoId + 1;
                         }
                         
-                        main.continuarSudoku(novoId, 0, "CUSTOM", linhaGabarito, linhaJogo, 0);
+                        main.continuarSudoku(novoId, 0, "CUSTOM", linhaGabarito, linhaJogo, 0, true);
                     }
                 }
 

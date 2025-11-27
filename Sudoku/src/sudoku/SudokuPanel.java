@@ -23,7 +23,7 @@ public class SudokuPanel extends javax.swing.JPanel {
     private String dificuldade;
     private boolean controle = false;
     private int idPartida = -1;
-    private boolean custom = false;
+    private boolean custom;
     
     
     // Variaveis relacionadas ao timer do jogo
@@ -42,13 +42,14 @@ public class SudokuPanel extends javax.swing.JPanel {
     private int penalidadeTempo;
     private int penalidadeErro = 10; 
 
-    public SudokuPanel(int idPartida, int pontuacao, String dificuldade, String gabarito, String jogoAtual, int segundos, Mainframe main){
+    public SudokuPanel(int idPartida, int pontuacao, String dificuldade, String gabarito, String jogoAtual, int segundos, boolean  custom, Mainframe main){
         this.pontuacao = pontuacao;
         this.dificuldade = dificuldade;
         this.segundos = segundos;
         this.main = main;
         controle = true;
         this.idPartida = idPartida;
+        this.custom = custom;
         
         this.sudoku = new Sudoku(gabarito, jogoAtual, dificuldade);
         
@@ -421,32 +422,49 @@ public class SudokuPanel extends javax.swing.JPanel {
     private void definirParametrosDificuldade(String dif) {
         switch (dif.toLowerCase()) {
             case "facil" -> {
-                multiplicadorDificuldade = 5;
-                penalidadeTempo = 30;
+                multiplicadorDificuldade = 50;  
+                penalidadeErro = 200;           
+                penalidadeTempo = 5;
             }
             case "medio" -> {
-                multiplicadorDificuldade = 10;
-                penalidadeTempo = 20;
-            }
-            case "dificil" -> {
-                multiplicadorDificuldade = 15;
+                multiplicadorDificuldade = 100; 
+                penalidadeErro = 400;
                 penalidadeTempo = 10;
             }
+            case "dificil" -> {
+                multiplicadorDificuldade = 150; 
+                penalidadeErro = 600;
+                penalidadeTempo = 15;
+            }
             case "custom" -> {
-                custom = true;
+                multiplicadorDificuldade = 0;
+                penalidadeTempo = 0;
+                penalidadeErro = 0;
             }
         }
     }
     
-    private void atualizarPontuacao() {
-        if(!custom){
-            pontuacao = 
-                (acertos * multiplicadorDificuldade)
-                - (erros * penalidadeErro)
-                - (segundos / penalidadeTempo);
-
-            jLabel1.setText("Pontuação: " + pontuacao);
+   private void atualizarPontuacao() {
+        // 1. REGRA DO CUSTOM: Pontuação sempre 0
+        if (dificuldade.equals("CUSTOM")) {
+            pontuacao = 0;
+            jLabel1.setText("Pontuação: 0 (Modo Livre)");
+            return; // Sai do método aqui, não calcula mais nada
         }
+
+        
+        int minutosDecorridos = segundos / 60;
+        int descontoPorTempo = minutosDecorridos * penalidadeTempo;
+
+        
+        pontuacao = (acertos * multiplicadorDificuldade) 
+                  - (erros * penalidadeErro) 
+                  - descontoPorTempo;
+
+        // (Opcional) Se não quiser pontuação negativa:
+        // pontuacao = Math.max(0, pontuacao);
+
+        jLabel1.setText("Pontuação: " + pontuacao);
     }
     
     private void verificarFimDeJogo() {
@@ -1522,33 +1540,50 @@ public class SudokuPanel extends javax.swing.JPanel {
         
         
         try {
-            if(controle == false){
+            // Pegamos a conexão (agora com o DBConnection corrigido no Passo 1, isso não vai dar erro)
+            java.sql.Connection conn = DBConnection.getInstance().getConnection();
+
+            if (controle == false || custom == true) {
+                System.out.println("Criando novo registro (INSERT)...");
+
                 String sql = "INSERT INTO partidas " +
                      "(usuario_id, dificuldade, gabarito, jogo_atual, tempo_decorrido, pontuacao, status, data_criacao, data_ultima_jogada) " +
                      "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-                
-                java.sql.Connection conn = DBConnection.getInstance().getConnection();
-                java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+
+                // IMPORTANTE: Adicionei RETURN_GENERATED_KEYS para pegar o ID que o banco criou
+                java.sql.PreparedStatement stmt = conn.prepareStatement(sql, java.sql.Statement.RETURN_GENERATED_KEYS);
 
                 stmt.setInt(1, user.getId());          
                 stmt.setString(2, dificuldade);        
-                stmt.setString(3, gabarito);           
+                stmt.setString(3, gabarito);            
                 stmt.setString(4, jogoAtual);          
                 stmt.setInt(5, segundos);              
                 stmt.setInt(6, pontuacao);             
-                stmt.setString(7, "EM_ANDAMENTO");     
-                stmt.setDate(8, dataHoje);             
+                stmt.setString(7, "EM_ANDAMENTO");      
+                stmt.setDate(8, dataHoje);              
                 stmt.setDate(9, dataHoje);
-                
-                
+
                 stmt.executeUpdate();
+
+                // --- RECUPERA O ID GERADO ---
+                java.sql.ResultSet rs = stmt.getGeneratedKeys();
+                if (rs.next()) {
+                    this.idPartida = rs.getInt(1); // Atualiza o ID na memória do jogo!
+                    System.out.println("Jogo salvo com novo ID: " + this.idPartida);
+                }
+
+                
+                
+                this.controle = true; 
+
                 stmt.close();
-            }else{
-                // Lógica de UPDATE (Atualizar jogo existente)
-    
-                // ATENÇÃO: Verifique se você tem a variável 'idPartida' na classe
+
+            } else {
+                System.out.println("Atualizando registro existente (UPDATE)...");
+                // Lógica de UPDATE (Mantive a sua, só adicionei a verificação de segurança)
+
                 if (this.idPartida == -1) {
-                    System.out.println("Erro: Tentando atualizar sem ID de partida!");
+                    javax.swing.JOptionPane.showMessageDialog(null, "Erro crítico: ID da partida inválido para atualização.");
                     return;
                 }
 
@@ -1557,31 +1592,28 @@ public class SudokuPanel extends javax.swing.JPanel {
                              "tempo_decorrido = ?, " +
                              "pontuacao = ?, " +
                              "data_ultima_jogada = ? " +
-                             "WHERE id = ?"; // O Segredo é o WHERE pelo ID
+                             "WHERE id = ?"; 
 
-                java.sql.Connection conn = DBConnection.getInstance().getConnection();
                 java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
 
-                stmt.setString(1, jogoAtual);        // O tabuleiro mudou
-                stmt.setInt(2, segundos);            // O tempo aumentou
-                stmt.setInt(3, pontuacao);           // A pontuação mudou
-                stmt.setDate(4, dataHoje);           // Data de hoje
-                stmt.setInt(5, this.idPartida);      // <--- AQUI ENTRA O ID DA PARTIDA
+                stmt.setString(1, jogoAtual);        
+                stmt.setInt(2, segundos);            
+                stmt.setInt(3, pontuacao);           
+                stmt.setDate(4, dataHoje);           
+                stmt.setInt(5, this.idPartida);      
 
                 stmt.executeUpdate();
                 stmt.close();
-
             }
-            
 
+            // Sucesso
             main.mostrarTela("menu");
-            
+
         } catch (Exception e) {
-            e.printStackTrace();
+            e.printStackTrace(); // Mostra o erro no console
             javax.swing.JOptionPane.showMessageDialog(null, "Erro ao salvar: " + e.getMessage());
         }
-       
-        
+
     }//GEN-LAST:event_jButton12ActionPerformed
 
 

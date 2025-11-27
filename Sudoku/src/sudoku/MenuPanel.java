@@ -304,67 +304,92 @@ public class MenuPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btnContinuarActionPerformed
 
     private void btnCarregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCarregarActionPerformed
-        try {
-            
-            //Cria o selector de arquvios
-            JFileChooser seletor = new JFileChooser();
 
-            //Seta o titulo da janela e adiciona um filtro para ser possivel selecionar apenas .txt
-            seletor.setDialogTitle("Selecione o arquivo do Sudoku");
-            seletor.setFileFilter(new FileNameExtensionFilter("Arquivos de Texto (*.txt)", "txt"));
+        //Cria o selector de arquvios
+        JFileChooser seletor = new JFileChooser();
+        
+        //Cria o user para pegar o id do player
+        Usuario user = SessaoUsuario.getUsuarioLogado();
+        if (user == null) return;
 
-            int escolha = seletor.showOpenDialog(null);
-             
-            if (escolha == JFileChooser.APPROVE_OPTION) {
-                File arquivoSelecionado = seletor.getSelectedFile();
+        //Seta o titulo da janela e adiciona um filtro para ser possivel selecionar apenas .txt
+        seletor.setDialogTitle("Selecione o arquivo do Sudoku");
+        seletor.setFileFilter(new FileNameExtensionFilter("Arquivos de Texto (*.txt)", "txt"));
 
-                // Usamos o try-with-resources para garantir que o arquivo fecha
-                try (BufferedReader br = new BufferedReader(new FileReader(arquivoSelecionado))) {
+        int escolha = seletor.showOpenDialog(null);
 
-                    //Valida a linha do gabaruti
-                    String linhaGabarito = br.readLine();
+        if (escolha == JFileChooser.APPROVE_OPTION) {
+            File arquivoSelecionado = seletor.getSelectedFile();
 
-                    if (linhaGabarito == null) {
-                        throw new Exception("O arquivo está vazio.");
-                    }
-                    linhaGabarito = linhaGabarito.trim(); // Limpa espaços extras
+            // Usamos o try-with-resources para garantir que o arquivo fecha
+            try (BufferedReader br = new BufferedReader(new FileReader(arquivoSelecionado))) {
 
-                    if (linhaGabarito.length() != 81) {
-                        throw new Exception("Linha 1 (Gabarito) deve ter 81 caracteres. Encontrado: " + linhaGabarito.length());
-                    }
-                    if (!linhaGabarito.matches("[1-9]+")) {
-                        throw new Exception("O Gabarito (linha 1) deve estar completo (1-9) e sem zeros..");
-                    }
+                //Valida a linha do gabaruti
+                String linhaGabarito = br.readLine();
 
-                    // Validação linha jogo atual
-                    String linhaJogo = br.readLine();
-
-                    if (linhaJogo == null) {
-                        throw new Exception("O arquivo não possui a 2ª linha (Jogo Atual).");
-                    }
-                    linhaJogo = linhaJogo.trim();
-
-                    if (linhaJogo.length() != 81) {
-                        throw new Exception("Linha 2 (Jogo) deve ter 81 caracteres. Encontrado: " + linhaJogo.length());
-                    }
-                    if (!linhaJogo.matches("[0-9]+")) {
-                        throw new Exception("O Jogo Atual contém caracteres inválidos (apenas 0-9 são permitidos).");
-                    }
-
-                    // Verifica se existe mais do que o padrão (2 linhas)
-                    if (br.readLine() != null) {
-                        throw new Exception("O arquivo contém mais de 2 linhas. Formato inválido.");
-                    }
-
-                  
-                    JOptionPane.showMessageDialog(null, "Arquivo válido! Jogo carregado.");
-
-                } catch (Exception erroValidacao) {
-                    JOptionPane.showMessageDialog(null, "Erro no arquivo:\n" + erroValidacao.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                if (linhaGabarito == null) {
+                    throw new Exception("O arquivo está vazio.");
                 }
+                linhaGabarito = linhaGabarito.trim(); // Limpa espaços extras
+
+                if (linhaGabarito.length() != 81) {
+                    throw new Exception("Linha 1 (Gabarito) deve ter 81 caracteres. Encontrado: " + linhaGabarito.length());
+                }
+                if (!linhaGabarito.matches("[1-9]+")) {
+                    throw new Exception("O Gabarito (linha 1) deve estar completo (1-9) e sem zeros..");
+                }
+
+                // Validação linha jogo atual
+                String linhaJogo = br.readLine();
+
+                if (linhaJogo == null) {
+                    throw new Exception("O arquivo não possui a 2ª linha (Jogo Atual).");
+                }
+                linhaJogo = linhaJogo.trim();
+
+                if (linhaJogo.length() != 81) {
+                    throw new Exception("Linha 2 (Jogo) deve ter 81 caracteres. Encontrado: " + linhaJogo.length());
+                }
+                if (!linhaJogo.matches("[0-9]+")) {
+                    throw new Exception("O Jogo Atual contém caracteres inválidos (apenas 0-9 são permitidos).");
+                }
+
+                // Verifica se existe mais do que o padrão (2 linhas)
+                if (br.readLine() != null) {
+                    throw new Exception("O arquivo contém mais de 2 linhas. Formato inválido.");
+                }
+               
+
+                String sql = "SELECT MAX(id) as ultimo_id FROM partidas WHERE usuario_id = ?";
+
+                // Abre conexão apenas para esta consulta
+                try (java.sql.Connection conn = DBConnection.getInstance().getConnection();
+                     java.sql.PreparedStatement stmt = conn.prepareStatement(sql)) {
+
+                    stmt.setInt(1, user.getId());
+
+                    try (java.sql.ResultSet rs = stmt.executeQuery()) {
+                        int novoId = 1; // Valor padrão se for o primeiro jogo
+
+                        // O cursor deve se mover para a primeira linha
+                        if (rs.next()) {
+                            // Pega o maior ID que achou e soma 1
+                            // getInt(1) pega a primeira coluna do select
+                            int ultimoId = rs.getInt(1); 
+                            novoId = ultimoId + 1;
+                        }
+                        System.out.println(novoId);
+                        //main.continuarSudoku(novoId, 0, "CUSTOM", linhaGabarito, linhaJogo, 0);
+                    }
+                }
+
+            } catch (Exception erroValidacao) {
+                JOptionPane.showMessageDialog(null, "Erro no arquivo:\n" + erroValidacao.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
             }
-        } catch (Exception e) {
+        }else{
+            JOptionPane.showMessageDialog(null, "Nenhuma arquivo selecionado", "Erro", JOptionPane.ERROR_MESSAGE);
         }
+
         
     }//GEN-LAST:event_btnCarregarActionPerformed
 

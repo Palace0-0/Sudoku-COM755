@@ -431,6 +431,10 @@ public class SudokuPanel extends javax.swing.JPanel {
                 multiplicadorDificuldade = 15;
                 penalidadeTempo = 10;
             }
+            case "custom" -> {
+                multiplicadorDificuldade = 0;
+                penalidadeTempo = 0;
+            }
         }
     }
     

@@ -6,11 +6,15 @@ import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
+import javax.swing.JOptionPane;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
@@ -310,9 +314,54 @@ public class MenuPanel extends javax.swing.JPanel {
             seletor.setFileFilter(new FileNameExtensionFilter("Arquivos de Texto (*.txt)", "txt"));
 
             int escolha = seletor.showOpenDialog(null);
+             
+            if (escolha == JFileChooser.APPROVE_OPTION) {
+                File arquivoSelecionado = seletor.getSelectedFile();
 
-            if (escolha == 0){
+                // Usamos o try-with-resources para garantir que o arquivo fecha
+                try (BufferedReader br = new BufferedReader(new FileReader(arquivoSelecionado))) {
 
+                    //Valida a linha do gabaruti
+                    String linhaGabarito = br.readLine();
+
+                    if (linhaGabarito == null) {
+                        throw new Exception("O arquivo está vazio.");
+                    }
+                    linhaGabarito = linhaGabarito.trim(); // Limpa espaços extras
+
+                    if (linhaGabarito.length() != 81) {
+                        throw new Exception("Linha 1 (Gabarito) deve ter 81 caracteres. Encontrado: " + linhaGabarito.length());
+                    }
+                    if (!linhaGabarito.matches("[1-9]+")) {
+                        throw new Exception("O Gabarito (linha 1) deve estar completo (1-9) e sem zeros..");
+                    }
+
+                    // Validação linha jogo atual
+                    String linhaJogo = br.readLine();
+
+                    if (linhaJogo == null) {
+                        throw new Exception("O arquivo não possui a 2ª linha (Jogo Atual).");
+                    }
+                    linhaJogo = linhaJogo.trim();
+
+                    if (linhaJogo.length() != 81) {
+                        throw new Exception("Linha 2 (Jogo) deve ter 81 caracteres. Encontrado: " + linhaJogo.length());
+                    }
+                    if (!linhaJogo.matches("[0-9]+")) {
+                        throw new Exception("O Jogo Atual contém caracteres inválidos (apenas 0-9 são permitidos).");
+                    }
+
+                    // Verifica se existe mais do que o padrão (2 linhas)
+                    if (br.readLine() != null) {
+                        throw new Exception("O arquivo contém mais de 2 linhas. Formato inválido.");
+                    }
+
+                  
+                    JOptionPane.showMessageDialog(null, "Arquivo válido! Jogo carregado.");
+
+                } catch (Exception erroValidacao) {
+                    JOptionPane.showMessageDialog(null, "Erro no arquivo:\n" + erroValidacao.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+                }
             }
         } catch (Exception e) {
         }

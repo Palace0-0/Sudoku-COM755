@@ -40,7 +40,38 @@ public class SudokuPanel extends javax.swing.JPanel {
     private int penalidadeTempo;
     private int penalidadeErro = 10; 
 
+    public SudokuPanel(int pontuacao, String dificuldade, String gabarito, String jogoAtual, int segundos, Mainframe main){
+        this.pontuacao = pontuacao;
+        this.dificuldade = dificuldade;
+        this.segundos = segundos;
+        this.main = main;
+        
+        this.sudoku = new Sudoku(gabarito, jogoAtual, dificuldade);
+        
+       
 
+        //Monta toda a interface
+        initComponents();
+        definirParametrosDificuldade(dificuldade);
+        popularPainel();
+        configurarcampoSelecionado();
+        sudoku.printartabuleiro();
+
+       
+            timer = new Timer(1000, e -> {
+                this.segundos++;
+                atualizarLabelTempo();
+            });
+            timer.start();
+       
+        jButton10.setEnabled(false);
+    }
+    
+                     
+                  
+            //stmt.setString(3, gabarito);           
+            //stmt.setString(4, jogoAtual);          
+                 
 
     class FiltroSudoku extends DocumentFilter {
 

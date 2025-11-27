@@ -19,8 +19,21 @@ public class Sudoku {
         this.jogo = gerarJogo(dificuldade);
         this.dificuldade = dificuldade;
         
+    } 
+    
+    //Este construtor é para quando o jogo é continuado
+    public Sudoku(String gabarito, String jogoAtual, String dificuldade) {
+        resetarTabuleiro();
+        
+        this.tabuleiro = converterStringParaMatriz(gabarito);
+        this.jogo = converterStringParaMatriz(jogoAtual);
+        
+        this.dificuldade = dificuldade;
+        
+        
     }
-
+    
+  
     public int[][] getTabuleiro() {
         return tabuleiro;
     }
@@ -38,7 +51,21 @@ public class Sudoku {
     }
     
     
-    
+    // Método auxiliar que faz a mágica de conversão
+    private int[][] converterStringParaMatriz(String dados) {
+        int[][] matriz = new int[9][9];
+        int contador = 0;
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                // Pega o caractere na posição 'contador' e transforma em int
+                // Ex: pega o char '5' e transforma no número 5
+                matriz[i][j] = Character.getNumericValue(dados.charAt(contador));
+                contador++;
+            }
+        }
+        return matriz;
+    }
     
     
     private boolean verificarposicao(int valor, int linha, int coluna){

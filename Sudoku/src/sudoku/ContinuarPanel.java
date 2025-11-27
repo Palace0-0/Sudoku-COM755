@@ -15,14 +15,14 @@ public class ContinuarPanel extends javax.swing.JPanel {
     private Mainframe main;
 
     private void carregarTabela() {
-        modeloTabela = new DefaultTableModel(new Object[]{"ID", "Dificuldade", "Tempo", "Pontuação", "Data"}, 0);
+        modeloTabela = new DefaultTableModel(new Object[]{"ID", "Dificuldade", "Tempo", "Pontuação", "Data", "Segundos", "Gabarito", "JogoAtual"}, 0);
         jTable1.setModel(modeloTabela);
 
         Usuario user = SessaoUsuario.getUsuarioLogado();
         if (user == null) return; 
 
         // O SQL de busca agora inclui a coluna 'pontuacao'
-        String sql = "SELECT id, dificuldade, tempo_decorrido, data_ultima_jogada, pontuacao FROM partidas " +
+        String sql = "SELECT id, dificuldade, tempo_decorrido, data_ultima_jogada, pontuacao, gabarito, jogo_atual FROM partidas " +
                      "WHERE usuario_id = ? AND status = 'EM_ANDAMENTO' " +
                      "ORDER BY data_ultima_jogada DESC";
 
@@ -40,7 +40,10 @@ public class ContinuarPanel extends javax.swing.JPanel {
                         rs.getString("dificuldade"),
                         rs.getInt("tempo_decorrido") / 60 + ":" + rs.getInt("tempo_decorrido") % 60,
                         rs.getInt("pontuacao"), // <--- PONTUAÇÃO AQUI
-                        rs.getString("data_ultima_jogada")
+                        rs.getString("data_ultima_jogada"),
+                        rs.getInt("tempo_decorrido"),
+                        rs.getString("gabarito"), 
+                        rs.getString("jogo_atual")
                     });
                 }
             }
@@ -50,6 +53,15 @@ public class ContinuarPanel extends javax.swing.JPanel {
             jTable1.getColumnModel().getColumn(0).setMinWidth(0);
             jTable1.getColumnModel().getColumn(0).setMaxWidth(0);
             jTable1.getColumnModel().getColumn(0).setPreferredWidth(0);
+            jTable1.getColumnModel().getColumn(5).setMinWidth(0);
+            jTable1.getColumnModel().getColumn(5).setMaxWidth(0);
+            jTable1.getColumnModel().getColumn(5).setPreferredWidth(0);
+            jTable1.getColumnModel().getColumn(6).setMinWidth(0);
+            jTable1.getColumnModel().getColumn(6).setMaxWidth(0);
+            jTable1.getColumnModel().getColumn(6).setPreferredWidth(0);
+            jTable1.getColumnModel().getColumn(7).setMinWidth(0);
+            jTable1.getColumnModel().getColumn(7).setMaxWidth(0);
+            jTable1.getColumnModel().getColumn(7).setPreferredWidth(0);
 
         } catch (Exception e) {
             javax.swing.JOptionPane.showMessageDialog(this, "Erro ao carregar jogos: " + e.getMessage());
@@ -226,7 +238,22 @@ public class ContinuarPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnJogarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnJogarActionPerformed
-        // TODO add your handling code here:
+        int linhaSelecionada = jTable1.getSelectedRow();
+        
+        if(linhaSelecionada == -1){
+            javax.swing.JOptionPane.showMessageDialog(this, "Selecione um jogo para apagar.");
+            return;
+        }
+        
+        int pontuacao = (int) jTable1.getValueAt(linhaSelecionada, 3);
+        String dificuldade = (String) jTable1.getValueAt(linhaSelecionada, 1);
+        int tempo = (int) jTable1.getValueAt(linhaSelecionada, 5);
+        String gabarito = (String) jTable1.getValueAt(linhaSelecionada, 6);
+        String jogo_atual = (String) jTable1.getValueAt(linhaSelecionada, 7);
+        
+        main.continuarSudoku(pontuacao, dificuldade, gabarito, jogo_atual, tempo);
+        
+        
     }//GEN-LAST:event_btnJogarActionPerformed
 
     private void btnApagarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnApagarActionPerformed

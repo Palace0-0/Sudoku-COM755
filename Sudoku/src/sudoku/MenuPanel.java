@@ -378,8 +378,8 @@ public class MenuPanel extends javax.swing.JPanel {
                             int ultimoId = rs.getInt(1); 
                             novoId = ultimoId + 1;
                         }
-                        System.out.println(novoId);
-                        //main.continuarSudoku(novoId, 0, "CUSTOM", linhaGabarito, linhaJogo, 0);
+                        
+                        main.continuarSudoku(novoId, 0, "CUSTOM", linhaGabarito, linhaJogo, 0);
                     }
                 }
 

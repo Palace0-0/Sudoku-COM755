@@ -23,6 +23,7 @@ public class SudokuPanel extends javax.swing.JPanel {
     private String dificuldade;
     private boolean controle = false;
     private int idPartida = -1;
+    private boolean custom = false;
     
     
     // Variaveis relacionadas ao timer do jogo
@@ -432,19 +433,20 @@ public class SudokuPanel extends javax.swing.JPanel {
                 penalidadeTempo = 10;
             }
             case "custom" -> {
-                multiplicadorDificuldade = 0;
-                penalidadeTempo = 0;
+                custom = true;
             }
         }
     }
     
     private void atualizarPontuacao() {
-        pontuacao = 
-            (acertos * multiplicadorDificuldade)
-            - (erros * penalidadeErro)
-            - (segundos / penalidadeTempo);
+        if(!custom){
+            pontuacao = 
+                (acertos * multiplicadorDificuldade)
+                - (erros * penalidadeErro)
+                - (segundos / penalidadeTempo);
 
-        jLabel1.setText("Pontuação: " + pontuacao);
+            jLabel1.setText("Pontuação: " + pontuacao);
+        }
     }
     
     private void verificarFimDeJogo() {

@@ -10,10 +10,12 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.SwingConstants;
 import javax.swing.border.Border;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.LineBorder;
+import javax.swing.filechooser.FileNameExtensionFilter;
 
 
 public class MenuPanel extends javax.swing.JPanel {
@@ -298,7 +300,23 @@ public class MenuPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btnContinuarActionPerformed
 
     private void btnCarregarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCarregarActionPerformed
-        // TODO add your handling code here:
+        try {
+            
+            //Cria o selector de arquvios
+            JFileChooser seletor = new JFileChooser();
+
+            //Seta o titulo da janela e adiciona um filtro para ser possivel selecionar apenas .txt
+            seletor.setDialogTitle("Selecione o arquivo do Sudoku");
+            seletor.setFileFilter(new FileNameExtensionFilter("Arquivos de Texto (*.txt)", "txt"));
+
+            int escolha = seletor.showOpenDialog(null);
+
+            if (escolha == 0){
+
+            }
+        } catch (Exception e) {
+        }
+        
     }//GEN-LAST:event_btnCarregarActionPerformed
 
     private void btnSairActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSairActionPerformed

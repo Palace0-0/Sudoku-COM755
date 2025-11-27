@@ -28,7 +28,7 @@ public class Mainframe extends javax.swing.JFrame {
     }
     
     public void continuarSudoku(int idPartida, int pontuacao, String dificuldade, String gabarito, String jogoAtual, int segundos) {
-
+        
         // Criar dinamicamente um novo painel do jogo
         SudokuPanel sudokuPanel = new SudokuPanel(idPartida, pontuacao, dificuldade, gabarito, jogoAtual, segundos, this);
 

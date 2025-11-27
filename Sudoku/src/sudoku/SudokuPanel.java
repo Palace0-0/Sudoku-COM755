@@ -57,6 +57,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         initComponents();
         definirParametrosDificuldade(dificuldade);
         popularPainel();
+        atualizarPontuacao();
         configurarcampoSelecionado();
         sudoku.printartabuleiro();
 

@@ -49,6 +49,15 @@ public class Mainframe extends javax.swing.JFrame {
         mostrarTela("continuar");
     }
     
+    public void iniciarRanking() {
+        
+        RankingPanel rankingPanel = new RankingPanel(this);
+
+        container.add(rankingPanel, "ranking"); 
+
+ 
+        mostrarTela("ranking");
+    }
      // Método para trocar de tela
     public void mostrarTela(String nome) {
         cardLayout.show(container, nome);

@@ -307,7 +307,7 @@ public class MenuPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_btnSairActionPerformed
 
     private void btnRankingActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRankingActionPerformed
-        // TODO add your handling code here:
+        main.iniciarRanking();
     }//GEN-LAST:event_btnRankingActionPerformed
 
 

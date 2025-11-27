@@ -26,7 +26,7 @@ public class DificuldadesPanel extends javax.swing.JPanel {
 
         setBackground(new java.awt.Color(240, 245, 255));
 
-        PainelBotoes.setBackground(new java.awt.Color(245, 245, 245));
+        PainelBotoes.setBackground(new java.awt.Color(240, 245, 255));
 
         jButton1.setBackground(new java.awt.Color(153, 255, 153));
         jButton1.setFont(new java.awt.Font("SansSerif", 1, 20)); // NOI18N

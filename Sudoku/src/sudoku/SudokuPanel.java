@@ -486,36 +486,74 @@ public class SudokuPanel extends javax.swing.JPanel {
         
         java.sql.Date dataHoje = new java.sql.Date(System.currentTimeMillis());
 
-        
-        String sql = "INSERT INTO partidas " +
-                     "(usuario_id, dificuldade, gabarito, jogo_atual, tempo_decorrido, pontuacao, status, data_criacao, data_ultima_jogada) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
-        try {
-            java.sql.Connection conn = DBConnection.getInstance().getConnection();
-            java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+        java.sql.Connection conn = DBConnection.getInstance().getConnection();
+        if(!controle){
+            String sql = "INSERT INTO partidas " +
+                         "(usuario_id, dificuldade, gabarito, jogo_atual, tempo_decorrido, pontuacao, status, data_criacao, data_ultima_jogada) " +
+                         "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            try {
+
+                java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+
+                stmt.setInt(1, user.getId());          
+                stmt.setString(2, dificuldade);        
+                stmt.setString(3, gabarito);           
+                stmt.setString(4, jogoAtual);          
+                stmt.setInt(5, segundos);              
+                stmt.setInt(6, pontuacao);             
+                stmt.setString(7, "COMPLETO");     
+                stmt.setDate(8, dataHoje);             
+                stmt.setDate(9, dataHoje);
+
+                stmt.executeUpdate();
+                stmt.close();
+
+
+                main.mostrarTela("menu");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                javax.swing.JOptionPane.showMessageDialog(null, "Erro ao salvar: " + e.getMessage());
+            }
+        }else{ //Significa que este jogo ja existe no banco, so vai ser atualizado
             
-            stmt.setInt(1, user.getId());          
-            stmt.setString(2, dificuldade);        
-            stmt.setString(3, gabarito);           
-            stmt.setString(4, jogoAtual);          
-            stmt.setInt(5, segundos);              
-            stmt.setInt(6, pontuacao);             
-            stmt.setString(7, "COMPLETO");     
-            stmt.setDate(8, dataHoje);             
-            stmt.setDate(9, dataHoje);
+            if (this.idPartida <= 0) {
+                javax.swing.JOptionPane.showMessageDialog(null, "Erro crítico: ID da partida inválido para salvar.");
+                return;
+            }
+
+            System.out.println("Atualizando partida ID: " + this.idPartida);
+
+           
+            String sql = "UPDATE partidas SET " +
+                         "jogo_atual = ?, " +         
+                         "tempo_decorrido = ?, " +    
+                         "pontuacao = ?, " +    
+                         "status = ?, " +
+                         "data_ultima_jogada = ? " +  
+                         "WHERE id = ?";              
             
-            stmt.executeUpdate();
-            stmt.close();
-            
-            
-            main.mostrarTela("menu");
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            javax.swing.JOptionPane.showMessageDialog(null, "Erro ao salvar: " + e.getMessage());
-        }
-        
-        
+            try{
+                java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+
+                
+                stmt.setString(1, jogoAtual);   
+                stmt.setInt(2, segundos);      
+                stmt.setInt(3, pontuacao);  
+                stmt.setString(4, "COMPLETO");
+                stmt.setDate(5, dataHoje);
+                stmt.setInt(6, this.idPartida); 
+
+                
+                stmt.executeUpdate();
+                stmt.close();
+                
+                main.mostrarTela("menu");
+            }catch(Exception e){
+                e.printStackTrace();
+                JOptionPane.showMessageDialog(null, "Erro no banco: " + e.getMessage());
+            }
+        } 
     }
     
     public String converterMatrizParaString(int[][] matriz) {

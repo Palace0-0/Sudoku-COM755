@@ -21,7 +21,8 @@ public class SudokuPanel extends javax.swing.JPanel {
     private boolean atualizacaoInterna = false;
     private boolean carregando = false;
     private String dificuldade;
-
+    private boolean controle = false;
+    private int idPartida = -1;
     
     
     // Variaveis relacionadas ao timer do jogo
@@ -40,11 +41,13 @@ public class SudokuPanel extends javax.swing.JPanel {
     private int penalidadeTempo;
     private int penalidadeErro = 10; 
 
-    public SudokuPanel(int pontuacao, String dificuldade, String gabarito, String jogoAtual, int segundos, Mainframe main){
+    public SudokuPanel(int idPartida, int pontuacao, String dificuldade, String gabarito, String jogoAtual, int segundos, Mainframe main){
         this.pontuacao = pontuacao;
         this.dificuldade = dificuldade;
         this.segundos = segundos;
         this.main = main;
+        controle = true;
+        this.idPartida = idPartida;
         
         this.sudoku = new Sudoku(gabarito, jogoAtual, dificuldade);
         
@@ -1491,29 +1494,61 @@ public class SudokuPanel extends javax.swing.JPanel {
         java.sql.Date dataHoje = new java.sql.Date(System.currentTimeMillis());
 
         
-        String sql = "INSERT INTO partidas " +
-                     "(usuario_id, dificuldade, gabarito, jogo_atual, tempo_decorrido, pontuacao, status, data_criacao, data_ultima_jogada) " +
-                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+        
         
         try {
-            java.sql.Connection conn = DBConnection.getInstance().getConnection();
-            java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+            if(controle == false){
+                String sql = "INSERT INTO partidas " +
+                     "(usuario_id, dificuldade, gabarito, jogo_atual, tempo_decorrido, pontuacao, status, data_criacao, data_ultima_jogada) " +
+                     "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)";
+                
+                java.sql.Connection conn = DBConnection.getInstance().getConnection();
+                java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+
+                stmt.setInt(1, user.getId());          
+                stmt.setString(2, dificuldade);        
+                stmt.setString(3, gabarito);           
+                stmt.setString(4, jogoAtual);          
+                stmt.setInt(5, segundos);              
+                stmt.setInt(6, pontuacao);             
+                stmt.setString(7, "EM_ANDAMENTO");     
+                stmt.setDate(8, dataHoje);             
+                stmt.setDate(9, dataHoje);
+                
+                
+                stmt.executeUpdate();
+                stmt.close();
+            }else{
+                // Lógica de UPDATE (Atualizar jogo existente)
+    
+                // ATENÇÃO: Verifique se você tem a variável 'idPartida' na classe
+                if (this.idPartida == -1) {
+                    System.out.println("Erro: Tentando atualizar sem ID de partida!");
+                    return;
+                }
+
+                String sql = "UPDATE partidas SET " +
+                             "jogo_atual = ?, " +
+                             "tempo_decorrido = ?, " +
+                             "pontuacao = ?, " +
+                             "data_ultima_jogada = ? " +
+                             "WHERE id = ?"; // O Segredo é o WHERE pelo ID
+
+                java.sql.Connection conn = DBConnection.getInstance().getConnection();
+                java.sql.PreparedStatement stmt = conn.prepareStatement(sql);
+
+                stmt.setString(1, jogoAtual);        // O tabuleiro mudou
+                stmt.setInt(2, segundos);            // O tempo aumentou
+                stmt.setInt(3, pontuacao);           // A pontuação mudou
+                stmt.setDate(4, dataHoje);           // Data de hoje
+                stmt.setInt(5, this.idPartida);      // <--- AQUI ENTRA O ID DA PARTIDA
+
+                stmt.executeUpdate();
+                stmt.close();
+
+            }
             
-            stmt.setInt(1, user.getId());          
-            stmt.setString(2, dificuldade);        
-            stmt.setString(3, gabarito);           
-            stmt.setString(4, jogoAtual);          
-            stmt.setInt(5, segundos);              
-            stmt.setInt(6, pontuacao);             
-            stmt.setString(7, "EM_ANDAMENTO");     
-            stmt.setDate(8, dataHoje);             
-            stmt.setDate(9, dataHoje);
-            
-            stmt.executeUpdate();
-            stmt.close();
-            
-            
-            System.out.println("Salvo com sucesso!");
+
             main.mostrarTela("menu");
             
         } catch (Exception e) {

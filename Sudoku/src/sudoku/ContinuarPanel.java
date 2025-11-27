@@ -245,13 +245,14 @@ public class ContinuarPanel extends javax.swing.JPanel {
             return;
         }
         
+        int id = (int) jTable1.getValueAt(linhaSelecionada, 0);
         int pontuacao = (int) jTable1.getValueAt(linhaSelecionada, 3);
         String dificuldade = (String) jTable1.getValueAt(linhaSelecionada, 1);
         int tempo = (int) jTable1.getValueAt(linhaSelecionada, 5);
         String gabarito = (String) jTable1.getValueAt(linhaSelecionada, 6);
         String jogo_atual = (String) jTable1.getValueAt(linhaSelecionada, 7);
         
-        main.continuarSudoku(pontuacao, dificuldade, gabarito, jogo_atual, tempo);
+        main.continuarSudoku(id, pontuacao, dificuldade, gabarito, jogo_atual, tempo);
         
         
     }//GEN-LAST:event_btnJogarActionPerformed

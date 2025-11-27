@@ -236,47 +236,65 @@ public class SudokuPanel extends javax.swing.JPanel {
 
     //Esta função printa os valores do jogo no paineltabuleiro
     private void popularPainel() {
-        
+
         carregando = true; // 🔴 trava validação
-         
+
         int[][] matriz = sudoku.getJogo();
-        Component[] blocos = PainelTabuleiro.getComponents(); // 9 JPanels
+        // 1. PRECISAR PEGAR O GABARITO TAMBÉM
+        int[][] gabarito = sudoku.getTabuleiro(); 
+
+        Component[] blocos = PainelTabuleiro.getComponents();
 
         for (int b = 0; b < blocos.length; b++) {
             if (blocos[b] instanceof JPanel bloco) {
-                Component[] campos = bloco.getComponents(); // 9 JTextFields
+                Component[] campos = bloco.getComponents();
 
                 for (int c = 0; c < campos.length; c++) {
                     if (campos[c] instanceof JTextField campo) {
 
-                        // Calcula linha e coluna corretas na matriz
-                        int blocoLinha = (b / 3) * 3; // linha inicial do bloco
-                        int blocoColuna = (b % 3) * 3; // coluna inicial do bloco
-
+                        int blocoLinha = (b / 3) * 3;
+                        int blocoColuna = (b % 3) * 3;
                         int linha = blocoLinha + (c / 3);
                         int coluna = blocoColuna + (c % 3);
 
-                        // Salva posição no JTextField
                         campo.putClientProperty("linha", linha);
                         campo.putClientProperty("coluna", coluna);
 
                         int valor = matriz[linha][coluna];
+                        int valorCorreto = gabarito[linha][coluna]; // Valor do gabarito
 
+                        // Define o texto
                         campo.setText(valor == 0 ? "" : String.valueOf(valor));
-                        campo.setEditable(valor == 0); // apenas células vazias editáveis
-                        
-                        
-                        campo.setBackground(Color.WHITE);
-                        campo.setCaretColor(Color.WHITE);
-                        
+
+                        // --- NOVA LÓGICA DE BLOQUEIO ---
+                        if (valor == 0) {
+                            // Célula vazia: pode digitar e fundo branco
+                            campo.setEditable(true);
+                            campo.setBackground(Color.WHITE);
+                        } 
+                        else if (valor == valorCorreto) {
+                            // Valor está correto (Dica ou Acerto): Bloqueia
+                            campo.setEditable(false);
+                            campo.setBackground(Color.WHITE);
+                            // Opcional: Se quiser diferenciar dicas de acertos salvos,
+                            // teria que ter salvo a matriz inicial, mas assim funciona bem.
+                        } 
+                        else {
+                            // Valor está ERRADO: Tem que deixar editar para corrigir!
+                            campo.setEditable(true);
+                            campo.setBackground(new Color(255, 180, 180)); // Já carrega vermelho
+                        }
+
+                        campo.setCaretColor(Color.BLACK); // Mudei para preto para ver o cursor se editar
+
+                        // Remove filtros antigos para não acumular (segurança)
                         PlainDocument doc = (PlainDocument) campo.getDocument();
                         doc.setDocumentFilter(new FiltroSudoku(campo));
-
                     }
                 }
             }
         }
-        
+
         carregando = false; // 🔴 libera validação
     }
 

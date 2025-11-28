@@ -45,6 +45,8 @@ O obstáculo mais complexo foi a lógica de geração de jogos.
     2.  `BacktrackingSolver` e `buscarSolucoesRecursivo`: Core do algoritmo.
     3.  `contarSolucoes()`: Garante a integridade do jogo verificando o número de soluções possíveis após a remoção de cada peça. O comportamento é dinâmico e controlado pela variável **`limiteSolucoes`** (definida no método `gerarJogo` da classe `Sudoku`). Se a remoção de uma peça fizer o número de soluções exceder esse limite (garantindo solução única nos modos clássicos), o algoritmo desfaz a ação (*backtrack*).
 
+---
+
 ## 5. Análise de Desempenho
 
 O desempenho do algoritmo foi medido em uma máquina padrão. O Backtracking se mostrou extremamente eficiente para grades $9\times9$.
@@ -62,14 +64,30 @@ O desempenho do algoritmo foi medido em uma máquina padrão. O Backtracking se 
 
 ---
 
-## 6. Tecnologias e Bibliotecas
+## 6. Formato de Arquivo para Importação (.txt)
+
+Para utilizar a funcionalidade de **Carregar Jogo** via arquivo de texto, o arquivo de entrada deve seguir rigorosamente o padrão abaixo para ser processado pelo parser da aplicação:
+
+* **Formato:** Arquivo de texto simples (`.txt`).
+* **Estrutura:** Exatamente **duas linhas**.
+* **Comprimento:** Cada linha deve conter **81 caracteres** numéricos (representando a matriz $9\times9$ linearizada).
+    * **Linha 1:** O Gabarito (Tabuleiro completo e resolvido).
+    * **Linha 2:** O Jogo Atual (Tabuleiro com zeros `0` representando as casas vazias).
+
+**Exemplo de conteúdo válido:**
+```text
+534678912672195348198342567859761423426853791713924856961537284287419635345286179
+530678912602195048198302560859761023406803791713904856901537084207419635045206179
+```
+
+## 7. Tecnologias e Bibliotecas
 
 * **Linguagem:** Java (JDK 17+)
 * **IDE:** Apache NetBeans 23
 * **Interface:** Java Swing + [FlatLaf](https://www.formdev.com/flatlaf/)
 * **Banco de Dados:** MySQL (Connector/J)
 
-## 7. Instalação e Execução
+## 8. Instalação e Execução
 
 ### Pré-requisitos
 1.  Ter o **MySQL** instalado.

@@ -53,10 +53,10 @@ O desempenho do algoritmo foi medido em uma máquina padrão. O Backtracking se 
 
 | Dificuldade | Peças Removidas | Comportamento | Tempo Médio (ms) |
 | :--- | :---: | :--- | :---: |
-| **Fácil** | 30 | Instantâneo | ~2 ms |
-| **Médio** | 40 | Instantâneo | ~15 ms |
-| **Difícil** | 50 | Muito Rápido | ~45 ms |
-| **Modo Caos** | Variável | Varia conforme ramificações | ~180 ms* |
+| **Fácil** | 36 | Instantâneo | ~2 ms |
+| **Médio** | 46 | Instantâneo | ~15 ms |
+| **Difícil** | 56 | Muito Rápido | ~45 ms |
+| **Modo Caos** | 62 | Varia conforme número de soluções | ~180 ms* |
 
 *\*Nota sobre o Modo Caos:* O tempo de geração e resolução no modo Caos é superior. Isso ocorre porque o algoritmo precisa verificar múltiplas ramificações de soluções. Foi observado que, se a variável interna `limiteSolucoes` for configurada para um valor muito alto, o tempo de processamento cresce exponencialmente, podendo causar lentidão ou travamentos momentâneos na interface devido ao custo computacional de encontrar todas as permutações possíveis.
 

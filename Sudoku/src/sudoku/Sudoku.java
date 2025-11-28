@@ -12,6 +12,9 @@ public class Sudoku {
     private int [][] jogo ;
     private String dificuldade;
     
+    // Variável auxiliar para contar soluções
+    private int solucoesEncontradas = 0;
+    
     //Construtor da classe
     public Sudoku(String dificuldade) {
         resetarTabuleiro();
@@ -67,7 +70,7 @@ public class Sudoku {
         return matriz;
     }
     
-    
+    //Verifica a posição para prencher o tabuleiro
     private boolean verificarposicao(int valor, int linha, int coluna){
         
         //Verifica se o valar a ser add ja existe na linha
@@ -102,7 +105,82 @@ public class Sudoku {
         return true;
     }
     
-     // Preenche o tabuleiro usando backtracking
+    //Verifica a posição no solver 
+    private boolean verificarposicaoSolver(int[][] JogoAtual, int valor, int linha, int coluna){
+        
+        //Verifica se o valar a ser add ja existe na linha
+        for (int i = 0; i < JogoAtual.length; i++) {
+            if (valor == JogoAtual[linha][i]){
+                //System.out.println(valor + "já existe na linha");
+                return false;
+            }
+        }
+        
+        //Verifica se o valar a ser add ja existe na coluna
+        for (int j = 0; j < JogoAtual.length; j++) {
+            if (valor == JogoAtual[j][coluna]){
+                //System.out.println(valor + "já existe na coluna");
+                return false;
+            }
+        }
+        
+        //Verifica se o valar a ser add ja existe na matriz 3x3
+        int inicioLinha = (linha / 3) * 3;
+        int inicioColuna = (coluna / 3) * 3;
+        
+        for (int i = inicioLinha; i < inicioLinha + 3; i++) {
+            for (int j = inicioColuna; j < inicioColuna + 3; j++) {
+                if (JogoAtual[i][j] == valor) {
+                    //System.out.println(valor + "já existe na matriz 3x3");
+                    return false;
+                }
+            }
+        }
+        
+        return true;
+    }
+    
+    private boolean BacktrackingSolver(int[][] JogoAtual) {
+
+        for (int linha = 0; linha < 9; linha++) {
+            for (int coluna = 0; coluna < 9; coluna++) {
+
+                // Se achou uma casa vazia (0), precisamos tentar preencher
+                if (JogoAtual[linha][coluna] == 0) {
+
+                    for (int valor = 1; valor <= 9; valor++) {
+                        // ATENÇÃO: Corrigi a ordem dos parâmetros aqui
+                        if (verificarposicaoSolver(JogoAtual, valor, linha, coluna)) {
+
+                            JogoAtual[linha][coluna] = valor; // Tenta o número
+
+                            // Chama a recursão. Se ela retornar true, achamos a solução!
+                            if (BacktrackingSolver(JogoAtual)) {
+                                return true;
+                            }
+
+                            // Se chegou aqui, o número não serviu. Backtrack (zera a casa)
+                            JogoAtual[linha][coluna] = 0;
+                        }
+                    }
+
+                    // Se testou 1 a 9 e nada funcionou nesta casa vazia,
+                    // significa que o erro está numa jogada anterior. Retorna false.
+                    return false;
+                }
+            }
+        }
+
+        // Se percorreu os dois loops inteiros e não achou nenhum 0, 
+        // significa que o tabuleiro está cheio e correto.
+        return true; 
+    }
+    
+    public void resolverJogo(){
+        BacktrackingSolver(jogo);
+    }
+
+    // Preenche o tabuleiro usando backtracking
     private boolean populartabuleiro() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -137,52 +215,96 @@ public class Sudoku {
         return true;
     }
     
-    //Este método gera o jogo em si, pois ele remove a quantia de peças do tabuleiro com base no parametro recebido
-    private int[][] gerarJogo(String dificuldade){
-         
-        //Faz uma cópia do jogo para que assim possa ser verificado no futuro se a jogada foi correta
+    private int[][] gerarJogo(String dificuldade) {
+        // 1. Copia o tabuleiro original para o jogo
         int[][] jogo = new int[9][9];
         for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                jogo[i][j] = tabuleiro[i][j];
-            }
+            System.arraycopy(tabuleiro[i], 0, jogo[i], 0, 9);
         }
-        
-        
-        //Define a quantia de peças a ser removida com base no parametro recebido
-        int qtdRemover = 0;
+
+        // 2. Define tentativas baseado na dificuldade
+        // Quanto mais difícil, mais tentamos remover, mas sempre checando
+        int tentativas = 0;
         switch (dificuldade.toLowerCase()) {
-            case "facil":
-                System.out.println("Jogo facil");
-                qtdRemover = 30;
-                break;
-            case "medio":
-                System.out.println("Jogo medio");
-                qtdRemover = 40;
-                break;
-            case "dificil":
-                System.out.println("Jogo dificil");
-                qtdRemover = 50;
-                break;
-            
+            case "facil": tentativas = 30; break;
+            case "medio": tentativas = 50; break; 
+            case "dificil": tentativas = 80; break; // Tenta remover agressivamente
+            default: tentativas = 30;
         }
-        
-        //Criar e embaralha a lista com as 81 posições
+
+        // Lista de posições embaralhadas
         List<Integer> posicoes = new ArrayList<>();
         for (int i = 0; i < 81; i++) posicoes.add(i);
-        
         Collections.shuffle(posicoes);
-         
-        for (int i = 0; i < qtdRemover; i++) {
+
+        // 3. Tenta remover peça por peça
+        int removidos = 0;
+        
+        // Loop por todas as posições aleatórias
+        for (int i = 0; i < 81; i++) {
+            if (removidos >= tentativas) break; // Já removemos o suficiente para essa dificuldade
+
             int pos = posicoes.get(i);
             int linha = pos / 9;
             int coluna = pos % 9;
 
+            // Guarda o valor original caso precisemos desfazer
+            int valorBackup = jogo[linha][coluna];
+            
+            // Remove temporariamente
             jogo[linha][coluna] = 0;
+
+            // 4. VERIFICAÇÃO CRÍTICA:
+            // Verificamos se o tabuleiro "buracado" ainda tem EXATAMENTE 1 solução
+            // Copiamos 'jogo' para não estragar a matriz original durante o teste
+            int[][] copiaParaTeste = copiarMatriz(jogo);
+            solucoesEncontradas = 0;
+            contarSolucoes(copiaParaTeste);
+
+            if (solucoesEncontradas != 1) {
+                // Se encontrou 0 ou mais de 1 solução, então essa remoção estragou o jogo.
+                // Colocamos o número de volta!
+                jogo[linha][coluna] = valorBackup;
+            } else {
+                // Se continuou com 1 solução, mantemos o 0 (sucesso)
+                removidos++;
+            }
         }
         
-
+        System.out.println("Consegui remover " + removidos + " números mantendo solução única.");
         return jogo;
+    }
+
+    // Método auxiliar para criar cópias profundas de matriz
+    private int[][] copiarMatriz(int[][] original) {
+        int[][] copia = new int[9][9];
+        for (int i = 0; i < 9; i++) {
+            System.arraycopy(original[i], 0, copia[i], 0, 9);
+        }
+        return copia;
+    }
+
+    // Um solver modificado que não para na primeira solução, ele conta quantas existem
+    // Para otimizar, paramos assim que acharmos 2 (pois já sabemos que não é único)
+    private void contarSolucoes(int[][] board) {
+        if (solucoesEncontradas > 1) return; // Otimização: Se já achou mais de 1, para.
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] == 0) {
+                    for (int valor = 1; valor <= 9; valor++) {
+                        if (verificarposicaoSolver(board, valor, i, j)) {
+                            board[i][j] = valor;
+                            contarSolucoes(board);
+                            board[i][j] = 0; // backtrack
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+        // Se chegou aqui, achou uma solução completa
+        solucoesEncontradas++;
     }
     private void resetarTabuleiro() {
         for (int i = 0; i < 9; i++) {

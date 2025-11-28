@@ -1577,7 +1577,15 @@ public class SudokuPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
-        // TODO add your handling code here:
+        System.out.println("Resultado");
+        
+        sudoku.resolverJogo();
+        int[][] jogoResolvido = sudoku.getJogo();
+        
+        popularPainel();
+        
+
+        
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed

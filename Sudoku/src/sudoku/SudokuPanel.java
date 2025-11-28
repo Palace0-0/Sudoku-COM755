@@ -245,7 +245,6 @@ public class SudokuPanel extends javax.swing.JPanel {
         carregando = true; // 🔴 trava validação
 
         int[][] matriz = sudoku.getJogo();
-        // 1. PRECISAR PEGAR O GABARITO TAMBÉM
         int[][] gabarito = sudoku.getTabuleiro(); 
 
         Component[] blocos = PainelTabuleiro.getComponents();
@@ -271,7 +270,6 @@ public class SudokuPanel extends javax.swing.JPanel {
                         // Define o texto
                         campo.setText(valor == 0 ? "" : String.valueOf(valor));
 
-                        // --- NOVA LÓGICA DE BLOQUEIO ---
                         if (valor == 0) {
                             // Célula vazia: pode digitar e fundo branco
                             campo.setEditable(true);
@@ -281,8 +279,7 @@ public class SudokuPanel extends javax.swing.JPanel {
                             // Valor está correto (Dica ou Acerto): Bloqueia
                             campo.setEditable(false);
                             campo.setBackground(Color.WHITE);
-                            // Opcional: Se quiser diferenciar dicas de acertos salvos,
-                            // teria que ter salvo a matriz inicial, mas assim funciona bem.
+
                         } 
                         else {
                             // Valor está ERRADO: Tem que deixar editar para corrigir!

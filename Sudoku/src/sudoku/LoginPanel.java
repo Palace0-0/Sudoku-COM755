@@ -101,10 +101,7 @@ public class LoginPanel extends javax.swing.JPanel {
         this.main = main; 
         initComponents();
         estilizar();
-        
-        txtSenha.setText("1234");
-        txtUsuario.setText("admin");
-        
+                      
         //Faz o Enter funcionar como um clique no botão Entrar
         javax.swing.SwingUtilities.invokeLater(() -> {
         // Verifica se já está anexado a uma janela para evitar erro

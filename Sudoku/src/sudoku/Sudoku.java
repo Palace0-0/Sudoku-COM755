@@ -15,9 +15,12 @@ public class Sudoku {
     // Variável auxiliar para contar soluções
     private int solucoesEncontradas = 0;
     
+    // ==========================================
+    //      CONSTRUTORES
+    // ==========================================
+    
     //Construtor da classe
     public Sudoku(String dificuldade) {
-        resetarTabuleiro();
         populartabuleiro();
         this.jogo = gerarJogo(dificuldade);
         this.dificuldade = dificuldade;
@@ -26,8 +29,6 @@ public class Sudoku {
     
     //Este construtor é para quando o jogo é continuado
     public Sudoku(String gabarito, String jogoAtual, String dificuldade) {
-        resetarTabuleiro();
-        
         this.tabuleiro = converterStringParaMatriz(gabarito);
         this.jogo = converterStringParaMatriz(jogoAtual);
         
@@ -36,171 +37,16 @@ public class Sudoku {
         
     }
     
-  
-    public int[][] getTabuleiro() {
-        return tabuleiro;
-    }
-
-    public int[][] getJogo() {
-        return jogo;
-    }
-
-    public void setJogo(int[][] jogo) {
-        this.jogo = jogo;
-    }
-
-    public String getDificuldade() {
-        return dificuldade;
-    }
     
-
-    //Verifica a posição para prencher o tabuleiro
-    private boolean verificarposicao(int valor, int linha, int coluna){
-        
-        //Verifica se o valar a ser add ja existe na linha
-        for (int i = 0; i < tabuleiro.length; i++) {
-            if (valor == tabuleiro[linha][i]){
-                //System.out.println(valor + "já existe na linha");
-                return false;
-            }
-        }
-        
-        //Verifica se o valar a ser add ja existe na coluna
-        for (int j = 0; j < tabuleiro.length; j++) {
-            if (valor == tabuleiro[j][coluna]){
-                //System.out.println(valor + "já existe na coluna");
-                return false;
-            }
-        }
-        
-        //Verifica se o valar a ser add ja existe na matriz 3x3
-        int inicioLinha = (linha / 3) * 3;
-        int inicioColuna = (coluna / 3) * 3;
-        
-        for (int i = inicioLinha; i < inicioLinha + 3; i++) {
-            for (int j = inicioColuna; j < inicioColuna + 3; j++) {
-                if (tabuleiro[i][j] == valor) {
-                    //System.out.println(valor + "já existe na matriz 3x3");
-                    return false;
-                }
-            }
-        }
-        
-        return true;
-    }
+    // ==========================================
+    //              API PÚBLICA 
+    // ==========================================
     
-    //Verifica a posição no solver 
-    private boolean verificarposicaoSolver(int[][] JogoAtual, int valor, int linha, int coluna){
-        
-        //Verifica se o valar a ser add ja existe na linha
-        for (int i = 0; i < JogoAtual.length; i++) {
-            if (valor == JogoAtual[linha][i]){
-                //System.out.println(valor + "já existe na linha");
-                return false;
-            }
-        }
-        
-        //Verifica se o valar a ser add ja existe na coluna
-        for (int j = 0; j < JogoAtual.length; j++) {
-            if (valor == JogoAtual[j][coluna]){
-                //System.out.println(valor + "já existe na coluna");
-                return false;
-            }
-        }
-        
-        //Verifica se o valar a ser add ja existe na matriz 3x3
-        int inicioLinha = (linha / 3) * 3;
-        int inicioColuna = (coluna / 3) * 3;
-        
-        for (int i = inicioLinha; i < inicioLinha + 3; i++) {
-            for (int j = inicioColuna; j < inicioColuna + 3; j++) {
-                if (JogoAtual[i][j] == valor) {
-                    //System.out.println(valor + "já existe na matriz 3x3");
-                    return false;
-                }
-            }
-        }
-        
-        return true;
-    }
-    
-    private boolean BacktrackingSolver(int[][] JogoAtual) {
-
-        for (int linha = 0; linha < 9; linha++) {
-            for (int coluna = 0; coluna < 9; coluna++) {
-
-                // Se achou uma casa vazia (0), precisamos tentar preencher
-                if (JogoAtual[linha][coluna] == 0) {
-
-                    for (int valor = 1; valor <= 9; valor++) {
-                        // ATENÇÃO: Corrigi a ordem dos parâmetros aqui
-                        if (verificarposicaoSolver(JogoAtual, valor, linha, coluna)) {
-
-                            JogoAtual[linha][coluna] = valor; // Tenta o número
-
-                            // Chama a recursão. Se ela retornar true, achamos a solução!
-                            if (BacktrackingSolver(JogoAtual)) {
-                                return true;
-                            }
-
-                            // Se chegou aqui, o número não serviu. Backtrack (zera a casa)
-                            JogoAtual[linha][coluna] = 0;
-                        }
-                    }
-
-                    // Se testou 1 a 9 e nada funcionou nesta casa vazia,
-                    // significa que o erro está numa jogada anterior. Retorna false.
-                    return false;
-                }
-            }
-        }
-
-        // Se percorreu os dois loops inteiros e não achou nenhum 0, 
-        // significa que o tabuleiro está cheio e correto.
-        return true; 
-    }
-    
+    //Resolve o jogo atual utilizando o solver
     public void resolverJogo(){
         BacktrackingSolver(jogo);
     }
-
-    // Preenche o tabuleiro usando backtracking
-    private boolean populartabuleiro() {
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                if (tabuleiro[i][j] == 0) { // se a célula estiver vazia
-
-                    // Cria lista de números 1-9 e embaralha para aleatoriedade
-                    List<Integer> numeros = new ArrayList<>();
-                    for (int n = 1; n <= 9; n++) numeros.add(n);
-                    Collections.shuffle(numeros);
-
-                    for (int valor : numeros) {
-                        if (verificarposicao(valor, i, j)) {
-                            tabuleiro[i][j] = valor;
-
-                            // Chamada recursiva
-                            if (populartabuleiro()) {
-                                return true; // encontrou solução
-                            }
-
-                            // Se não der certo, desfaz (backtrack)
-                            tabuleiro[i][j] = 0;
-                        }
-                    }
-
-                    // Nenhum número funcionou nesta célula, volta
-                    return false;
-                }
-            }
-        }
-
-        // Todas as células foram preenchidas
-        return true;
-    }
     
-    // --- NOVOS MÉTODOS PARA O MODO CAOS ---
-
     // Retorna uma lista com várias soluções possíveis (até um limite)
     public List<int[][]> encontrarTodasSolucoes(int[][] jogoInicial) {
         List<int[][]> listaSolucoes = new ArrayList<>();
@@ -213,150 +59,8 @@ public class Sudoku {
         
         return listaSolucoes;
     }
-
-    private void buscarSolucoesRecursivo(int[][] board, List<int[][]> lista) {
-        // Limite de segurança: se já achou 10 soluções, para (para não travar o PC)
-        if (lista.size() >= 100) return;
-
-        for (int linha = 0; linha < 9; linha++) {
-            for (int coluna = 0; coluna < 9; coluna++) {
-                
-                if (board[linha][coluna] == 0) { // Casa vazia
-                    
-                    for (int valor = 1; valor <= 9; valor++) {
-                        if (verificarposicaoSolver(board, valor, linha, coluna)) {
-                            
-                            board[linha][coluna] = valor;
-                            
-                            // Continua procurando...
-                            buscarSolucoesRecursivo(board, lista);
-                            
-                            // BACKTRACK: Zera para tentar achar OUTRO caminho com outro número
-                            board[linha][coluna] = 0;
-                        }
-                    }
-                    return; // Se testou 1-9 e nada serviu nesta casa, volta
-                }
-            }
-        }
-
-        // Se chegou aqui, o tabuleiro está completo (uma solução foi achada)
-        // Adicionamos uma CÓPIA PROFUNDA na lista
-        lista.add(copiarMatriz(board));
-    }
     
-    private int[][] gerarJogo(String dificuldade) {
-        int[][] jogo = new int[9][9];
-        for (int i = 0; i < 9; i++) System.arraycopy(tabuleiro[i], 0, jogo[i], 0, 9);
-
-        int tentativas = 0;
-        
-        // Agora usamos uma variável inteira para o limite, em vez de booleano
-        int limiteSolucoes = 1; 
-
-        switch (dificuldade.toLowerCase()) {
-            case "facil": tentativas = 30; break;
-            case "medio": tentativas = 50; break; 
-            case "dificil": tentativas = 80; break;
-            case "caos": 
-                tentativas = 80; // Tenta remover bastante
-                limiteSolucoes = 300; // PERMITE ATÉ 5 SOLUÇÕES (Caos Controlado)
-                break;
-            default: tentativas = 30;
-        }
-
-        List<Integer> posicoes = new ArrayList<>();
-        for (int i = 0; i < 81; i++) posicoes.add(i);
-        Collections.shuffle(posicoes);
-
-        int removidos = 0;
-        
-        for (int i = 0; i < 81; i++) {
-            if (removidos >= tentativas) break;
-
-            int pos = posicoes.get(i);
-            int linha = pos / 9;
-            int coluna = pos % 9;
-
-            int valorBackup = jogo[linha][coluna];
-            jogo[linha][coluna] = 0; // Remove
-
-            // --- SEMPRE VERIFICA, MAS COM LIMITES DIFERENTES ---
-            int[][] copiaParaTeste = copiarMatriz(jogo);
-            solucoesEncontradas = 0;
-            
-            // Passamos o limite configurado (1 para normal, 5 para caos)
-            contarSolucoes(copiaParaTeste, limiteSolucoes);
-
-            // Se achou mais soluções do que o permitido, desfaz.
-            if (solucoesEncontradas > limiteSolucoes) {
-                jogo[linha][coluna] = valorBackup; 
-            } else {
-                // Se achou 0 (impossível pois partimos de um jogo cheio) 
-                // ou qualquer valor até o limite, aceita.
-                removidos++;
-            }
-        }
-        return jogo;
-    }
-
-    // Método auxiliar para criar cópias profundas de matriz
-    private int[][] copiarMatriz(int[][] original) {
-        int[][] copia = new int[9][9];
-        for (int i = 0; i < 9; i++) {
-            System.arraycopy(original[i], 0, copia[i], 0, 9);
-        }
-        return copia;
-    }
-
-    // Um solver modificado que não para na primeira solução, ele conta quantas existem
-    // Para otimizar, paramos assim que acharmos 2 (pois já sabemos que não é único)
-    // Agora aceita um parametro 'limite'
-    private void contarSolucoes(int[][] board, int limite) {
-        // Se já passou do limite desejado, para de processar para economizar CPU
-        if (solucoesEncontradas > limite) return; 
-
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                if (board[i][j] == 0) {
-                    for (int valor = 1; valor <= 9; valor++) {
-                        if (verificarposicaoSolver(board, valor, i, j)) {
-                            board[i][j] = valor;
-                            contarSolucoes(board, limite); // Passa o limite adiante
-                            board[i][j] = 0; 
-                        }
-                    }
-                    return;
-                }
-            }
-        }
-        solucoesEncontradas++;
-    }
-    
-     // Método auxiliar que faz a mágica de conversão
-    private int[][] converterStringParaMatriz(String dados) {
-        int[][] matriz = new int[9][9];
-        int contador = 0;
-
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                // Pega o caractere na posição 'contador' e transforma em int
-                // Ex: pega o char '5' e transforma no número 5
-                matriz[i][j] = Character.getNumericValue(dados.charAt(contador));
-                contador++;
-            }
-        }
-        return matriz;
-    }
-    
-    private void resetarTabuleiro() {
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                tabuleiro[i][j] = 0;
-            }
-        }
-    }
-
+    //Printa o gabarito no console
     public void printartabuleiro() {
         
         System.out.println("Dificuldade : "+dificuldade);
@@ -382,8 +86,269 @@ public class Sudoku {
 
         System.out.println(" -------------------------\n");
     }
+    
+    // ==========================================
+    //    LÓGICA CORE (Privados de alto nível)
+    // ==========================================
+    
+    // Preenche o tabuleiro usando backtracking
+    private boolean populartabuleiro() {
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (tabuleiro[i][j] == 0) { // se a célula estiver vazia
 
+                    // Cria lista de números 1-9 e embaralha para aleatoriedade
+                    List<Integer> numeros = new ArrayList<>();
+                    for (int n = 1; n <= 9; n++) numeros.add(n);
+                    Collections.shuffle(numeros);
+
+                    for (int valor : numeros) {
+                        if (verificarPosicao(tabuleiro, valor, i, j)) {
+                            tabuleiro[i][j] = valor;
+
+                            // Chamada recursiva
+                            if (populartabuleiro()) {
+                                return true; // encontrou solução
+                            }
+
+                            // Se não der certo, desfaz (backtrack)
+                            tabuleiro[i][j] = 0;
+                        }
+                    }
+
+                    // Nenhum número funcionou nesta célula, volta
+                    return false;
+                }
+            }
+        }
+
+        // Todas as células foram preenchidas
+        return true;
+    }
+    
+    //Gera o jogo a ser jogado com base na dificuldade
+    private int[][] gerarJogo(String dificuldade) {
+        // Cria uma cópia do gabarito para não estragar o original
+        int[][] jogo = new int[9][9];
+        for (int i = 0; i < 9; i++) System.arraycopy(tabuleiro[i], 0, jogo[i], 0, 9);
+
+        int tentativas = 0;
+        
+        // Agora usamos uma variável inteira para o limite, em vez de booleano
+        int limiteSolucoes = 1; 
+
+        switch (dificuldade.toLowerCase()) {
+            case "facil": tentativas = 30; break;
+            case "medio": tentativas = 50; break; 
+            case "dificil": tentativas = 80; break;
+            case "caos": 
+                tentativas = 80; // Tenta remover bastante
+                limiteSolucoes = 5; // PERMITE ATÉ 5 SOLUÇÕES (Caos Controlado)
+                break;
+            default: tentativas = 30;
+        }
+
+        List<Integer> posicoes = new ArrayList<>();
+        for (int i = 0; i < 81; i++) posicoes.add(i);
+        Collections.shuffle(posicoes);
+
+        int removidos = 0;
+        
+        // Tenta remover N vezes (conforme a dificuldade)
+        for (int i = 0; i < 81; i++) {
+            if (removidos >= tentativas) break;
+            
+            // Traduz o número 0-80 para linha/coluna
+            int pos = posicoes.get(i);
+            int linha = pos / 9;
+            int coluna = pos % 9;
+            
+            //Guarda o valor q foi apagado e apaga
+            int valorBackup = jogo[linha][coluna];
+            jogo[linha][coluna] = 0; // Remove
+
+            // Fazemos uma cópia desse jogo com o buraco novo
+            int[][] copiaParaTeste = copiarMatriz(jogo);
+            solucoesEncontradas = 0;
+            
+            // Passamos o limite configurado (1 para normal, 5 para caos)
+            contarSolucoes(copiaParaTeste, limiteSolucoes);
+
+            // Se achou mais soluções do que o permitido, desfaz.
+            if (solucoesEncontradas > limiteSolucoes) {
+                jogo[linha][coluna] = valorBackup; 
+            } else {
+                // A remoção foi segura, conta como sucesso.
+                removidos++;
+            }
+        }
+        return jogo;
+    }
     
     
- 
+    private boolean BacktrackingSolver(int[][] JogoAtual) {
+
+        for (int linha = 0; linha < 9; linha++) {
+            for (int coluna = 0; coluna < 9; coluna++) {
+
+                // Se achou uma casa vazia (0), precisamos tentar preencher
+                if (JogoAtual[linha][coluna] == 0) {
+
+                    for (int valor = 1; valor <= 9; valor++) {
+                        // ATENÇÃO: Corrigi a ordem dos parâmetros aqui
+                        if (verificarPosicao(JogoAtual, valor, linha, coluna)) {
+
+                            JogoAtual[linha][coluna] = valor; // Tenta o número
+
+                            // Chama a recursão. Se ela retornar true, achamos a solução!
+                            if (BacktrackingSolver(JogoAtual)) {
+                                return true;
+                            }
+
+                            // Se chegou aqui, o número não serviu. Backtrack (zera a casa)
+                            JogoAtual[linha][coluna] = 0;
+                        }
+                    }
+
+                    // Se testou 1 a 9 e nada funcionou nesta casa vazia,
+                    // significa que o erro está numa jogada anterior. Retorna false.
+                    return false;
+                }
+            }
+        }
+
+        // Se percorreu os dois loops inteiros e não achou nenhum 0, 
+        // significa que o tabuleiro está cheio e correto.
+        return true; 
+    }
+    
+    
+    private void buscarSolucoesRecursivo(int[][] board, List<int[][]> lista) {
+        // Limite de segurança: se já achou 10 soluções, para (para não travar o PC)
+        if (lista.size() >= 100) return;
+
+        for (int linha = 0; linha < 9; linha++) {
+            for (int coluna = 0; coluna < 9; coluna++) {
+                
+                if (board[linha][coluna] == 0) { // Casa vazia
+                    
+                    for (int valor = 1; valor <= 9; valor++) {
+                        if (verificarPosicao(board, valor, linha, coluna)) {
+                            
+                            board[linha][coluna] = valor;
+                            
+                            // Continua procurando...
+                            buscarSolucoesRecursivo(board, lista);
+                            
+                            // BACKTRACK: Zera para tentar achar OUTRO caminho com outro número
+                            board[linha][coluna] = 0;
+                        }
+                    }
+                    return; // Se testou 1-9 e nada serviu nesta casa, volta
+                }
+            }
+        }
+
+        // Se chegou aqui, o tabuleiro está completo (uma solução foi achada)
+        // Adicionamos uma CÓPIA PROFUNDA na lista
+        lista.add(copiarMatriz(board));
+    }
+    
+    // Um solver modificado que não para na primeira solução, ele conta quantas existem
+    private void contarSolucoes(int[][] board, int limite) {
+        // Se já passou do limite desejado, para de processar para economizar CPU
+        if (solucoesEncontradas > limite) return; 
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                if (board[i][j] == 0) {
+                    for (int valor = 1; valor <= 9; valor++) {
+                        if (verificarPosicao(board, valor, i, j)) {
+                            board[i][j] = valor;
+                            contarSolucoes(board, limite); // Passa o limite adiante
+                            board[i][j] = 0; 
+                        }
+                    }
+                    return;
+                }
+            }
+        }
+        solucoesEncontradas++;
+    }
+
+    // ==========================================
+    //     UTILITÁRIOS (Helpers de baixo nível)
+    // ==========================================
+    
+    
+    //Verifica a posição para prencher o tabuleiro
+    private boolean verificarPosicao(int[][] matrizAnalise, int valor, int linha, int coluna){
+        
+        // Verifica Linha
+        for (int i = 0; i < 9; i++) {
+            if (matrizAnalise[linha][i] == valor) return false;
+        }
+        
+        // Verifica Coluna
+        for (int j = 0; j < 9; j++) {
+            if (matrizAnalise[j][coluna] == valor) return false;
+        }
+        
+        // Verifica Quadrante 3x3
+        int inicioLinha = (linha / 3) * 3;
+        int inicioColuna = (coluna / 3) * 3;
+        
+        for (int i = inicioLinha; i < inicioLinha + 3; i++) {
+            for (int j = inicioColuna; j < inicioColuna + 3; j++) {
+                if (matrizAnalise[i][j] == valor) return false;
+            }
+        }
+        
+        return true;
+    }
+    
+    // Método auxiliar para criar cópias profundas de matriz
+    private int[][] copiarMatriz(int[][] original) {
+        int[][] copia = new int[9][9];
+        for (int i = 0; i < 9; i++) {
+            System.arraycopy(original[i], 0, copia[i], 0, 9);
+        }
+        return copia;
+    }
+    
+    // Método auxiliar que faz a mágica de conversão
+    private int[][] converterStringParaMatriz(String dados) {
+        int[][] matriz = new int[9][9];
+        int contador = 0;
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                // Pega o caractere na posição 'contador' e transforma em int
+                matriz[i][j] = Character.getNumericValue(dados.charAt(contador));
+                contador++;
+            }
+        }
+        return matriz;
+    }
+    
+    // ==========================================
+    //           GETTERS E SETTERS 
+    // ==========================================
+    
+    public int[][] getTabuleiro() {
+        return tabuleiro;
+    }
+
+    public int[][] getJogo() {
+        return jogo;
+    }
+
+    public void setJogo(int[][] jogo) {
+        this.jogo = jogo;
+    }
+
+    public String getDificuldade() {
+        return dificuldade;
+    }
+    
 }

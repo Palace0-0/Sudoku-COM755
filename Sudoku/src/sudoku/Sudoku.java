@@ -53,23 +53,7 @@ public class Sudoku {
         return dificuldade;
     }
     
-    
-    // Método auxiliar que faz a mágica de conversão
-    private int[][] converterStringParaMatriz(String dados) {
-        int[][] matriz = new int[9][9];
-        int contador = 0;
 
-        for (int i = 0; i < 9; i++) {
-            for (int j = 0; j < 9; j++) {
-                // Pega o caractere na posição 'contador' e transforma em int
-                // Ex: pega o char '5' e transforma no número 5
-                matriz[i][j] = Character.getNumericValue(dados.charAt(contador));
-                contador++;
-            }
-        }
-        return matriz;
-    }
-    
     //Verifica a posição para prencher o tabuleiro
     private boolean verificarposicao(int valor, int linha, int coluna){
         
@@ -215,63 +199,104 @@ public class Sudoku {
         return true;
     }
     
-    private int[][] gerarJogo(String dificuldade) {
-        // 1. Copia o tabuleiro original para o jogo
-        int[][] jogo = new int[9][9];
-        for (int i = 0; i < 9; i++) {
-            System.arraycopy(tabuleiro[i], 0, jogo[i], 0, 9);
+    // --- NOVOS MÉTODOS PARA O MODO CAOS ---
+
+    // Retorna uma lista com várias soluções possíveis (até um limite)
+    public List<int[][]> encontrarTodasSolucoes(int[][] jogoInicial) {
+        List<int[][]> listaSolucoes = new ArrayList<>();
+        
+        // Trabalhamos numa cópia para não estragar o jogo atual visualmente agora
+        int[][] copiaTrabalho = copiarMatriz(jogoInicial);
+        
+        // Chama o método recursivo que preenche a lista
+        buscarSolucoesRecursivo(copiaTrabalho, listaSolucoes);
+        
+        return listaSolucoes;
+    }
+
+    private void buscarSolucoesRecursivo(int[][] board, List<int[][]> lista) {
+        // Limite de segurança: se já achou 10 soluções, para (para não travar o PC)
+        if (lista.size() >= 100) return;
+
+        for (int linha = 0; linha < 9; linha++) {
+            for (int coluna = 0; coluna < 9; coluna++) {
+                
+                if (board[linha][coluna] == 0) { // Casa vazia
+                    
+                    for (int valor = 1; valor <= 9; valor++) {
+                        if (verificarposicaoSolver(board, valor, linha, coluna)) {
+                            
+                            board[linha][coluna] = valor;
+                            
+                            // Continua procurando...
+                            buscarSolucoesRecursivo(board, lista);
+                            
+                            // BACKTRACK: Zera para tentar achar OUTRO caminho com outro número
+                            board[linha][coluna] = 0;
+                        }
+                    }
+                    return; // Se testou 1-9 e nada serviu nesta casa, volta
+                }
+            }
         }
 
-        // 2. Define tentativas baseado na dificuldade
-        // Quanto mais difícil, mais tentamos remover, mas sempre checando
+        // Se chegou aqui, o tabuleiro está completo (uma solução foi achada)
+        // Adicionamos uma CÓPIA PROFUNDA na lista
+        lista.add(copiarMatriz(board));
+    }
+    
+    private int[][] gerarJogo(String dificuldade) {
+        int[][] jogo = new int[9][9];
+        for (int i = 0; i < 9; i++) System.arraycopy(tabuleiro[i], 0, jogo[i], 0, 9);
+
         int tentativas = 0;
+        
+        // Agora usamos uma variável inteira para o limite, em vez de booleano
+        int limiteSolucoes = 1; 
+
         switch (dificuldade.toLowerCase()) {
             case "facil": tentativas = 30; break;
             case "medio": tentativas = 50; break; 
-            case "dificil": tentativas = 80; break; // Tenta remover agressivamente
+            case "dificil": tentativas = 80; break;
+            case "caos": 
+                tentativas = 80; // Tenta remover bastante
+                limiteSolucoes = 300; // PERMITE ATÉ 5 SOLUÇÕES (Caos Controlado)
+                break;
             default: tentativas = 30;
         }
 
-        // Lista de posições embaralhadas
         List<Integer> posicoes = new ArrayList<>();
         for (int i = 0; i < 81; i++) posicoes.add(i);
         Collections.shuffle(posicoes);
 
-        // 3. Tenta remover peça por peça
         int removidos = 0;
         
-        // Loop por todas as posições aleatórias
         for (int i = 0; i < 81; i++) {
-            if (removidos >= tentativas) break; // Já removemos o suficiente para essa dificuldade
+            if (removidos >= tentativas) break;
 
             int pos = posicoes.get(i);
             int linha = pos / 9;
             int coluna = pos % 9;
 
-            // Guarda o valor original caso precisemos desfazer
             int valorBackup = jogo[linha][coluna];
-            
-            // Remove temporariamente
-            jogo[linha][coluna] = 0;
+            jogo[linha][coluna] = 0; // Remove
 
-            // 4. VERIFICAÇÃO CRÍTICA:
-            // Verificamos se o tabuleiro "buracado" ainda tem EXATAMENTE 1 solução
-            // Copiamos 'jogo' para não estragar a matriz original durante o teste
+            // --- SEMPRE VERIFICA, MAS COM LIMITES DIFERENTES ---
             int[][] copiaParaTeste = copiarMatriz(jogo);
             solucoesEncontradas = 0;
-            contarSolucoes(copiaParaTeste);
+            
+            // Passamos o limite configurado (1 para normal, 5 para caos)
+            contarSolucoes(copiaParaTeste, limiteSolucoes);
 
-            if (solucoesEncontradas != 1) {
-                // Se encontrou 0 ou mais de 1 solução, então essa remoção estragou o jogo.
-                // Colocamos o número de volta!
-                jogo[linha][coluna] = valorBackup;
+            // Se achou mais soluções do que o permitido, desfaz.
+            if (solucoesEncontradas > limiteSolucoes) {
+                jogo[linha][coluna] = valorBackup; 
             } else {
-                // Se continuou com 1 solução, mantemos o 0 (sucesso)
+                // Se achou 0 (impossível pois partimos de um jogo cheio) 
+                // ou qualquer valor até o limite, aceita.
                 removidos++;
             }
         }
-        
-        System.out.println("Consegui remover " + removidos + " números mantendo solução única.");
         return jogo;
     }
 
@@ -286,8 +311,10 @@ public class Sudoku {
 
     // Um solver modificado que não para na primeira solução, ele conta quantas existem
     // Para otimizar, paramos assim que acharmos 2 (pois já sabemos que não é único)
-    private void contarSolucoes(int[][] board) {
-        if (solucoesEncontradas > 1) return; // Otimização: Se já achou mais de 1, para.
+    // Agora aceita um parametro 'limite'
+    private void contarSolucoes(int[][] board, int limite) {
+        // Se já passou do limite desejado, para de processar para economizar CPU
+        if (solucoesEncontradas > limite) return; 
 
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -295,17 +322,33 @@ public class Sudoku {
                     for (int valor = 1; valor <= 9; valor++) {
                         if (verificarposicaoSolver(board, valor, i, j)) {
                             board[i][j] = valor;
-                            contarSolucoes(board);
-                            board[i][j] = 0; // backtrack
+                            contarSolucoes(board, limite); // Passa o limite adiante
+                            board[i][j] = 0; 
                         }
                     }
                     return;
                 }
             }
         }
-        // Se chegou aqui, achou uma solução completa
         solucoesEncontradas++;
     }
+    
+     // Método auxiliar que faz a mágica de conversão
+    private int[][] converterStringParaMatriz(String dados) {
+        int[][] matriz = new int[9][9];
+        int contador = 0;
+
+        for (int i = 0; i < 9; i++) {
+            for (int j = 0; j < 9; j++) {
+                // Pega o caractere na posição 'contador' e transforma em int
+                // Ex: pega o char '5' e transforma no número 5
+                matriz[i][j] = Character.getNumericValue(dados.charAt(contador));
+                contador++;
+            }
+        }
+        return matriz;
+    }
+    
     private void resetarTabuleiro() {
         for (int i = 0; i < 9; i++) {
             for (int j = 0; j < 9; j++) {
@@ -315,6 +358,9 @@ public class Sudoku {
     }
 
     public void printartabuleiro() {
+        
+        System.out.println("Dificuldade : "+dificuldade);
+        
         for (int i = 0; i < 9; i++) {
 
             // Linha de separação dos blocos

@@ -4,6 +4,7 @@ package sudoku;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.FocusAdapter;
+import java.util.List;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
@@ -61,8 +62,9 @@ public class SudokuPanel extends javax.swing.JPanel {
         popularPainel();
         atualizarPontuacao();
         configurarcampoSelecionado();
-        sudoku.printartabuleiro();
-
+        if(!dificuldade.contentEquals("caos")){
+            sudoku.printartabuleiro();
+        }
        
             timer = new Timer(1000, e -> {
                 this.segundos++;
@@ -299,6 +301,23 @@ public class SudokuPanel extends javax.swing.JPanel {
         }
 
         carregando = false; // 🔴 libera validação
+    }
+    
+    private void popularCaos (){
+        
+        Component[] blocos = PainelTabuleiro.getComponents();
+        for (int b = 0; b < blocos.length; b++) {
+                if (blocos[b] instanceof JPanel bloco) {
+                    Component[] campos = bloco.getComponents();
+
+                    for (int c = 0; c < campos.length; c++) {
+                        if (campos[c] instanceof JTextField campo) {
+                            campo.setBackground(new Color (255,255,255));
+                        }
+                    }
+                }
+            }
+    
     }
 
     //Adiciona o focus para todos os jtextfields
@@ -571,6 +590,7 @@ public class SudokuPanel extends javax.swing.JPanel {
         return sb.toString(); // Retorna a string com 81 caracteres
     }
     
+
     
     
     public SudokuPanel(String dificuldade, Mainframe main) {
@@ -588,7 +608,10 @@ public class SudokuPanel extends javax.swing.JPanel {
         definirParametrosDificuldade(dificuldade);
         popularPainel();
         configurarcampoSelecionado();
-        sudoku.printartabuleiro();
+        
+        if(!dificuldade.contentEquals("caos")){
+            sudoku.printartabuleiro();
+        }
 
         //Inicia timer
         //if (startTimer) {
@@ -1577,15 +1600,43 @@ public class SudokuPanel extends javax.swing.JPanel {
     }//GEN-LAST:event_jButton10ActionPerformed
 
     private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton11ActionPerformed
-        System.out.println("Resultado");
-        
-        sudoku.resolverJogo();
-        int[][] jogoResolvido = sudoku.getJogo();
-        
-        popularPainel();
-        
 
-        
+        int[][] jogoAtualNaTela = sudoku.getJogo(); 
+
+        //Verifica qual é a dificuldade para decidir o comportamento
+        if (sudoku.getDificuldade().equalsIgnoreCase("caos")) {
+
+            List<int[][]> solucoes = sudoku.encontrarTodasSolucoes(jogoAtualNaTela);
+
+            if (solucoes.isEmpty()) {
+                JOptionPane.showMessageDialog(null, "Não há solução possível para os números que estão na tela!");
+            } else {
+                // Feedback especial do Modo Caos
+                JOptionPane.showMessageDialog(null, 
+                    "MODO CAOS: Encontrei " + solucoes.size() + " soluções diferentes!\n" +
+                    "Vou mostrar a primeira encontrada.");
+
+                // Pega a primeira solução e atualiza o objeto e a tela
+                int[][] primeiraSolucao = solucoes.get(0);
+                sudoku.setJogo(primeiraSolucao);
+                popularPainel();
+                popularCaos(); // Atualiza os JTextFields visualmente
+                
+                for (int i = 0; i < solucoes.size(); i++) {
+                    
+                    String results = converterMatrizParaString(solucoes.get(i));
+                    System.out.println("Solucao "+i+": "+results+"\n");
+                }
+                
+                
+            }
+
+        } else {
+            
+            sudoku.resolverJogo();
+            popularPainel();
+        }
+   
     }//GEN-LAST:event_jButton11ActionPerformed
 
     private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton12ActionPerformed

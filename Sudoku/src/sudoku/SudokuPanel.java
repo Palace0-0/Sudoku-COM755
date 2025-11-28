@@ -1632,6 +1632,7 @@ public class SudokuPanel extends javax.swing.JPanel {
             
             sudoku.resolverJogo();
             popularPainel();
+            verificarFimDeJogo();
         }
    
     }//GEN-LAST:event_jButton11ActionPerformed

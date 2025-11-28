@@ -138,11 +138,11 @@ public class Sudoku {
         int limiteSolucoes = 1; 
 
         switch (dificuldade.toLowerCase()) {
-            case "facil": tentativas = 30; break;
-            case "medio": tentativas = 50; break; 
-            case "dificil": tentativas = 80; break;
+            case "facil": tentativas = 36; break;
+            case "medio": tentativas = 46; break; 
+            case "dificil": tentativas = 56; break;
             case "caos": 
-                tentativas = 80; // Tenta remover bastante
+                tentativas = 62; // Tenta remover bastante
                 limiteSolucoes = 5; // PERMITE ATÉ 5 SOLUÇÕES (Caos Controlado)
                 break;
             default: tentativas = 30;

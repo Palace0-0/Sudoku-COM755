@@ -1,7 +1,5 @@
 # Sudoku-COM755
 
-# Sudoku Solver - Computação de Alto Desempenho
-
 ## 1. Introdução
 
 Este projeto consiste na implementação completa de um jogo de Sudoku e de um *solver* automatizado, desenvolvido como atividade avaliativa da disciplina de Computação de Alto Desempenho.

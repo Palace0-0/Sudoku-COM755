@@ -12,8 +12,8 @@ public class DBConnection {
 
     // Configurações do Banco (Substituí o arquivo .ini por variáveis diretas)
     private static final String URL = "jdbc:mysql://localhost:3306/sudoku_db";
-    private static final String USER = "root";
-    private static final String PASS = "root123"; // Coloque sua senha do MySQL aqui se tiver
+    private static final String USER = "user";  // Coloque sua user do MySQL aqui se tiver
+    private static final String PASS = "senha"; // Coloque sua senha do MySQL aqui se tiver
 
     private Connection connection;
     private Statement statement;

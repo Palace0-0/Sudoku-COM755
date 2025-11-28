@@ -185,7 +185,7 @@ public class Sudoku {
         return jogo;
     }
     
-    
+    //Tenta resolver o jogo atual com backtracj
     private boolean BacktrackingSolver(int[][] JogoAtual) {
 
         for (int linha = 0; linha < 9; linha++) {
@@ -225,7 +225,7 @@ public class Sudoku {
     
     private void buscarSolucoesRecursivo(int[][] board, List<int[][]> lista) {
         // Limite de segurança: se já achou 10 soluções, para (para não travar o PC)
-        if (lista.size() >= 100) return;
+        if (lista.size() >= 10) return;
 
         for (int linha = 0; linha < 9; linha++) {
             for (int coluna = 0; coluna < 9; coluna++) {
